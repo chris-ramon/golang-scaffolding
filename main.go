@@ -10,6 +10,7 @@ import (
 	"github.com/chris-ramon/golang-scaffolding/config"
 	"github.com/chris-ramon/golang-scaffolding/domain/auth"
 	"github.com/chris-ramon/golang-scaffolding/domain/gql"
+	"github.com/chris-ramon/golang-scaffolding/pkg/route"
 )
 
 func main() {
@@ -18,16 +19,16 @@ func main() {
 	router := httprouter.New()
 
 	authService := auth.NewService()
-
-	handlers := auth.NewHandlers(authService)
-
-	authRoutes := auth.NewRoutes(handlers)
-	for _, r := range authRoutes.All() {
-		router.Handle(r.HTTPMethod, r.Path, r.Handler)
-	}
+	authHandlers := auth.NewHandlers(authService)
+	authRoutes := auth.NewRoutes(authHandlers)
 
 	gqlRoutes := gql.NewRoutes()
-	for _, r := range gqlRoutes.All() {
+
+	routes := []route.Route{}
+	routes = append(routes, authRoutes.All()...)
+	routes = append(routes, gqlRoutes.All()...)
+
+	for _, r := range routes {
 		router.Handle(r.HTTPMethod, r.Path, r.Handler)
 	}
 
