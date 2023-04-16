@@ -1,14 +1,18 @@
 package auth
 
 import (
-	"net/http"
-
 	"github.com/julienschmidt/httprouter"
 
 	"github.com/chris-ramon/golang-scaffolding/pkg/route"
 )
 
+type Handlers interface {
+	GetPing() httprouter.Handle
+	GetCurrentUser() httprouter.Handle
+}
+
 type routes struct {
+	handlers Handlers
 }
 
 func (r *routes) All() []route.Route {
@@ -16,13 +20,16 @@ func (r *routes) All() []route.Route {
 		route.Route{
 			HTTPMethod: "GET",
 			Path:       "/auth/ping",
-			Handler: func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-				w.Write([]byte("ok"))
-			},
+			Handler:    r.handlers.GetPing(),
+		},
+		route.Route{
+			HTTPMethod: "GET",
+			Path:       "/auth/current-user",
+			Handler:    r.handlers.GetCurrentUser(),
 		},
 	}
 }
 
-func NewRoutes() *routes {
-	return &routes{}
+func NewRoutes(handlers Handlers) *routes {
+	return &routes{handlers: handlers}
 }
