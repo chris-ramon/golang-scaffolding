@@ -3,7 +3,7 @@ package types
 import (
 	"github.com/graphql-go/graphql"
 
-	"github.com/chris-ramon/golang-scaffolding/gql/fields"
+	"github.com/chris-ramon/golang-scaffolding/domain/gql/fields"
 )
 
 var QueryType = graphql.NewObject(graphql.ObjectConfig{
