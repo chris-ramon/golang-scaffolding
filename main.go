@@ -17,7 +17,9 @@ func main() {
 
 	router := httprouter.New()
 
-	handlers := auth.NewHandlers()
+	authService := auth.NewService()
+
+	handlers := auth.NewHandlers(authService)
 
 	authRoutes := auth.NewRoutes(handlers)
 	for _, r := range authRoutes.All() {
