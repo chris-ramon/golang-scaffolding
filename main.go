@@ -14,9 +14,9 @@ import (
 func main() {
 	conf := config.New(8080)
 	h := handler.New(&handler.Config{
-		Schema:   &testutil.StarWarsSchema,
-		Pretty:   true,
-		GraphiQL: true,
+		Schema:     &testutil.StarWarsSchema,
+		Pretty:     true,
+		Playground: true,
 	})
 
 	http.Handle("/graphql", h)
