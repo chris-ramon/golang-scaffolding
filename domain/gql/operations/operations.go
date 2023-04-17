@@ -13,3 +13,10 @@ var Query = graphql.NewObject(graphql.ObjectConfig{
 		"currentUser": fields.CurrentUserField,
 	},
 })
+
+var Mutation = graphql.NewObject(graphql.ObjectConfig{
+	Name: "Mutation",
+	Fields: graphql.Fields{
+		"authUser": fields.AuthUserField,
+	},
+})
