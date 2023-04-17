@@ -26,7 +26,7 @@ func main() {
 	authHandlers := auth.NewHandlers(authService)
 	authRoutes := auth.NewRoutes(authHandlers)
 
-	gqlHandlers, err := gql.NewHandlers()
+	gqlHandlers, err := gql.NewHandlers(authService)
 	if err != nil {
 		handleErr(err)
 	}
