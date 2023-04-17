@@ -1,6 +1,7 @@
 package gql
 
 import (
+	"context"
 	"log"
 	"net/http"
 
@@ -35,15 +36,23 @@ func (ro *routes) All() []route.Route {
 }
 
 func NewRoutes() *routes {
-	_schema, err := schema.New()
+	appSchema, err := schema.New()
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	rootObjectFn := func(ctx context.Context, r *http.Request) map[string]interface{} {
+		rootObject := map[string]interface{}{
+			"services": &schema.Services{},
+		}
+		return rootObject
+	}
+
 	h := handler.New(&handler.Config{
-		Schema:     &_schema,
-		Pretty:     true,
-		Playground: true,
+		Schema:       &appSchema,
+		Pretty:       true,
+		Playground:   true,
+		RootObjectFn: rootObjectFn,
 	})
 
 	return &routes{handler: h}
