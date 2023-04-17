@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -39,8 +38,6 @@ func (s *service) AuthUser(ctx context.Context, username string, pwd string) (*t
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Printf("token: %v\n", token)
 
 	return &types.CurrentUser{
 		Username: "test user",
