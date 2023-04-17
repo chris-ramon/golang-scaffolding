@@ -14,6 +14,10 @@ import (
 )
 
 func main() {
+	handleErr := func(err error) {
+		log.Fatal(err)
+	}
+
 	conf := config.New(8080)
 
 	router := httprouter.New()
@@ -22,7 +26,12 @@ func main() {
 	authHandlers := auth.NewHandlers(authService)
 	authRoutes := auth.NewRoutes(authHandlers)
 
-	gqlRoutes := gql.NewRoutes()
+	gqlHandlers, err := gql.NewHandlers()
+	if err != nil {
+		handleErr(err)
+	}
+
+	gqlRoutes := gql.NewRoutes(gqlHandlers)
 
 	routes := []route.Route{}
 	routes = append(routes, authRoutes.All()...)
