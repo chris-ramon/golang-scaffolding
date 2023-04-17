@@ -9,6 +9,7 @@ import (
 var QueryType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Query",
 	Fields: graphql.Fields{
-		"ping": fields.PingField,
+		"ping":        fields.PingField,
+		"currentUser": fields.CurrentUserField,
 	},
 })
