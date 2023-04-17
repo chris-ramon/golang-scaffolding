@@ -8,6 +8,7 @@ import (
 
 func New() (graphql.Schema, error) {
 	return graphql.NewSchema(graphql.SchemaConfig{
-		Query: operations.Query,
+		Query:    operations.Query,
+		Mutation: operations.Mutation,
 	})
 }
