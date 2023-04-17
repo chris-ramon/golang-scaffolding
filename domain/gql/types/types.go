@@ -2,14 +2,22 @@ package types
 
 import (
 	"github.com/graphql-go/graphql"
-
-	"github.com/chris-ramon/golang-scaffolding/domain/gql/fields"
 )
 
-var QueryType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "Query",
+var UserType = graphql.NewObject(graphql.ObjectConfig{
+	Name: "UserType",
 	Fields: graphql.Fields{
-		"ping":        fields.PingField,
-		"currentUser": fields.CurrentUserField,
+		"id": &graphql.Field{
+			Description: "The id of the user.",
+			Type:        graphql.String,
+		},
+		"username": &graphql.Field{
+			Description: "The username of the user.",
+			Type:        graphql.String,
+		},
+		"jwt": &graphql.Field{
+			Description: "The current JWT of the user.",
+			Type:        graphql.String,
+		},
 	},
 })

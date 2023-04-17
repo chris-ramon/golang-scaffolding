@@ -3,6 +3,8 @@ package fields
 import (
 	"github.com/graphql-go/graphql"
 
+	"github.com/chris-ramon/golang-scaffolding/domain/auth/mappers"
+	"github.com/chris-ramon/golang-scaffolding/domain/gql/types"
 	"github.com/chris-ramon/golang-scaffolding/domain/internal/services"
 )
 
@@ -14,7 +16,7 @@ var PingField = &graphql.Field{
 }
 
 var CurrentUserField = &graphql.Field{
-	Type: graphql.String,
+	Type: types.UserType,
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 		rootValue := p.Info.RootValue.(map[string]interface{})
 		srvs, ok := rootValue["services"].(*services.Services)
@@ -27,6 +29,8 @@ var CurrentUserField = &graphql.Field{
 			return nil, err
 		}
 
-		return currentUser.Username, nil
+		currentUserAPI := mappers.CurrentUserFromTypeToAPI(currentUser)
+
+		return currentUserAPI, nil
 	},
 }
