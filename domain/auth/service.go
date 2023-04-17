@@ -9,7 +9,7 @@ type service struct {
 
 func (s *service) CurrentUser() (types.CurrentUser, error) {
 	return types.CurrentUser{
-		Username: "test",
+		Username: "test user",
 	}, nil
 }
 
