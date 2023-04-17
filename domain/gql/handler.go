@@ -7,6 +7,7 @@ import (
 	"github.com/graphql-go/handler"
 
 	"github.com/chris-ramon/golang-scaffolding/domain/gql/schema"
+	"github.com/chris-ramon/golang-scaffolding/domain/internal/services"
 )
 
 type handlers struct {
@@ -21,7 +22,7 @@ func (h *handlers) GetGraphQL() *handler.Handler {
 	return h.gqlHandler
 }
 
-func NewHandlers() (*handlers, error) {
+func NewHandlers(authService services.AuthService) (*handlers, error) {
 	appSchema, err := schema.New()
 	if err != nil {
 		return nil, err
@@ -29,7 +30,9 @@ func NewHandlers() (*handlers, error) {
 
 	rootObjectFn := func(ctx context.Context, r *http.Request) map[string]interface{} {
 		rootObject := map[string]interface{}{
-			"services": &schema.Services{},
+			"services": &services.Services{
+				AuthService: authService,
+			},
 		}
 		return rootObject
 	}
