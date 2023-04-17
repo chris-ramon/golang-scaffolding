@@ -6,8 +6,6 @@ import (
 	"github.com/chris-ramon/golang-scaffolding/domain/gql/types"
 )
 
-type Services struct{}
-
 func New() (graphql.Schema, error) {
 	return graphql.NewSchema(graphql.SchemaConfig{
 		Query: types.QueryType,
