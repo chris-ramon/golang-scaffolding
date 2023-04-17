@@ -10,3 +10,10 @@ var PingField = &graphql.Field{
 		return "ok", nil
 	},
 }
+
+var CurrentUserField = &graphql.Field{
+	Type: graphql.String,
+	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+		return "user", nil
+	},
+}
