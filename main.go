@@ -18,7 +18,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	conf := config.New(8080)
+	conf := config.New(8080, "local-signing-secret")
 
 	router := httprouter.New()
 
