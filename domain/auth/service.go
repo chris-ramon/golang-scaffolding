@@ -10,6 +10,7 @@ import (
 )
 
 type service struct {
+	JWTSigningSecret string
 }
 
 type customClaims struct {
@@ -24,7 +25,7 @@ func (s *service) CurrentUser() (types.CurrentUser, error) {
 }
 
 func (s *service) AuthUser(ctx context.Context, username string, pwd string) (*types.CurrentUser, error) {
-	expiresAt := jwt.NewNumericDate(time.Now().Add(3 * time.Minute))
+	expiresAt := jwt.NewNumericDate(time.Now().Add(24 * time.Hour))
 	data := map[string]string{}
 
 	claims := customClaims{
@@ -34,7 +35,7 @@ func (s *service) AuthUser(ctx context.Context, username string, pwd string) (*t
 		},
 	}
 
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte("local-signing-secret"))
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(s.JWTSigningSecret))
 	if err != nil {
 		return nil, err
 	}
