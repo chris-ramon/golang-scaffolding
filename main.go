@@ -22,7 +22,7 @@ func main() {
 
 	router := httprouter.New()
 
-	authService := auth.NewService()
+	authService := auth.NewService(conf.JWTSigningSecret)
 	authHandlers := auth.NewHandlers(authService)
 	authRoutes := auth.NewRoutes(authHandlers)
 
