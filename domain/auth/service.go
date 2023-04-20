@@ -2,6 +2,9 @@ package auth
 
 import (
 	"context"
+	"crypto/rsa"
+	"log"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -18,34 +21,73 @@ type customClaims struct {
 	jwt.RegisteredClaims
 }
 
-func (s *service) CurrentUser() (types.CurrentUser, error) {
-	return types.CurrentUser{
-		Username: "test user",
+var (
+	verifyKey *rsa.PublicKey
+	signKey   *rsa.PrivateKey
+)
+
+func init() {
+	handleError := func(err error) {
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	signBytes, err := os.ReadFile("./domain/auth/app.rsa") // openssl genrsa -out app.rsa 2048
+	handleError(err)
+
+	sKey, err := jwt.ParseRSAPrivateKeyFromPEM(signBytes)
+	handleError(err)
+	signKey = sKey
+
+	verifyBytes, err := os.ReadFile("./domain/auth/app.rsa.pub") // openssl rsa -in app.rsa -pubout > app.rsa.pub
+	handleError(err)
+
+	vKey, err := jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
+	handleError(err)
+	verifyKey = vKey
+}
+
+func (s *service) CurrentUser(jwtToken string) (*types.CurrentUser, error) {
+	parsedJWTToken, err := jwt.ParseWithClaims(jwtToken, &customClaims{}, func(t *jwt.Token) (interface{}, error) {
+		return verifyKey, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	claims := parsedJWTToken.Claims.(*customClaims)
+
+	return &types.CurrentUser{
+		Username: claims.Data["username"],
 	}, nil
 }
 
 func (s *service) AuthUser(ctx context.Context, username string, pwd string) (*types.CurrentUser, error) {
 	expiresAt := jwt.NewNumericDate(time.Now().Add(24 * time.Hour))
-	data := map[string]string{}
+	data := map[string]string{
+		"username": username,
+	}
 
-	claims := customClaims{
+	t := jwt.New(jwt.GetSigningMethod("RS256"))
+	t.Claims = customClaims{
 		data,
 		jwt.RegisteredClaims{
 			ExpiresAt: expiresAt,
 		},
 	}
 
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(s.JWTSigningSecret))
+	jwtToken, err := t.SignedString(signKey)
 	if err != nil {
 		return nil, err
 	}
 
 	return &types.CurrentUser{
-		Username: "test user",
-		JWT:      token,
+		Username: username,
+		JWT:      jwtToken,
 	}, nil
 }
 
-func NewService() *service {
-	return &service{}
+func NewService(JWTSigningSecret string) *service {
+	return &service{JWTSigningSecret: JWTSigningSecret}
 }
