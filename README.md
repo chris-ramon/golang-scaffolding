@@ -2,6 +2,12 @@
 
 A golang scaffolding for getting started new projects.
 
+#### Getting Started
+
+```
+docker-compose up
+```
+
 Contains the following example domains:
 - [ ] Env Variables.
 - [x] Config.
