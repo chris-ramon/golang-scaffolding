@@ -25,8 +25,7 @@ func (ro *routes) All() []route.Route {
 			HTTPMethod: "GET",
 			Path:       "/graphql",
 			Handler: func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-				ctx := context.WithValue(r.Context(), "Authorization", r.Header.Get("Authorization"))
-				r = r.WithContext(ctx)
+				r = r.WithContext(ctxutil.WithAuthHeader(r.Context(), r.Header))
 				ro.handlers.GetGraphQL().ServeHTTP(w, r)
 			},
 		},
@@ -34,8 +33,7 @@ func (ro *routes) All() []route.Route {
 			HTTPMethod: "POST",
 			Path:       "/graphql",
 			Handler: func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-				ctx := context.WithValue(r.Context(), "Authorization", r.Header.Get("Authorization"))
-				r = r.WithContext(ctx)
+				r = r.WithContext(ctxutil.WithAuthHeader(r.Context(), r.Header))
 				ro.handlers.PostGraphQL().ServeHTTP(w, r)
 			},
 		},
