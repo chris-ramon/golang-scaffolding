@@ -18,11 +18,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	conf := config.New(8080, "local-signing-secret")
+	conf := config.New(8080)
 
 	router := httprouter.New()
 
-	authService := auth.NewService(conf.JWTSigningSecret)
+	authService := auth.NewService()
 	authHandlers := auth.NewHandlers(authService)
 	authRoutes := auth.NewRoutes(authHandlers)
 

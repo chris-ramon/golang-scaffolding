@@ -13,7 +13,6 @@ import (
 )
 
 type service struct {
-	JWTSigningSecret string
 }
 
 type customClaims struct {
@@ -88,6 +87,6 @@ func (s *service) AuthUser(ctx context.Context, username string, pwd string) (*t
 	}, nil
 }
 
-func NewService(JWTSigningSecret string) *service {
-	return &service{JWTSigningSecret: JWTSigningSecret}
+func NewService() *service {
+	return &service{}
 }
