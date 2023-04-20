@@ -3,11 +3,11 @@ package auth
 import (
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/julienschmidt/httprouter"
 
 	"github.com/chris-ramon/golang-scaffolding/domain/auth/types"
+	"github.com/chris-ramon/golang-scaffolding/pkg/ctxutil"
 )
 
 type Service interface {
@@ -26,9 +26,15 @@ func (h *handlers) GetPing() httprouter.Handle {
 
 func (h *handlers) GetCurrentUser() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		authorization := strings.Split(r.Context().Value("Authorization").(string), " ")
+		r = r.WithContext(ctxutil.WithAuthHeader(r.Context(), r.Header))
+		authorization, err := ctxutil.AuthHeaderValueFromCtx(r.Context())
+		if err != nil {
+			log.Printf("failed to get authorization header: %v", err)
+			http.Error(w, "failed to get authorization header", http.StatusInternalServerError)
+			return
+		}
 
-		u, err := h.service.CurrentUser(authorization[1])
+		u, err := h.service.CurrentUser(authorization)
 		if err != nil {
 			log.Printf("failed to find current user: %v", err)
 			http.Error(w, "failed to find current user", http.StatusInternalServerError)
