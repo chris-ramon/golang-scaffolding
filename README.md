@@ -9,3 +9,5 @@ Contains the following example domains:
 - [x] JWT.
 - [x] GraphQL.
 - [ ] Docker Compose.
+- [ ] Admin.
+- [ ] Unit tests.
