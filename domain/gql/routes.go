@@ -1,12 +1,12 @@
 package gql
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/graphql-go/handler"
 	"github.com/julienschmidt/httprouter"
 
+	"github.com/chris-ramon/golang-scaffolding/pkg/ctxutil"
 	"github.com/chris-ramon/golang-scaffolding/pkg/route"
 )
 
