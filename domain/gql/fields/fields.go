@@ -2,11 +2,11 @@ package fields
 
 import (
 	"github.com/graphql-go/graphql"
-	"strings"
 
 	"github.com/chris-ramon/golang-scaffolding/domain/auth/mappers"
 	"github.com/chris-ramon/golang-scaffolding/domain/gql/types"
 	"github.com/chris-ramon/golang-scaffolding/domain/internal/services"
+	"github.com/chris-ramon/golang-scaffolding/pkg/ctxutil"
 )
 
 var PingField = &graphql.Field{
@@ -27,9 +27,12 @@ var CurrentUserField = &graphql.Field{
 			return nil, nil
 		}
 
-		authorization := strings.Split(p.Context.Value("Authorization").(string), " ")
+		authorization, err := ctxutil.AuthHeaderValueFromCtx(p.Context)
+		if err != nil {
+			return nil, err
+		}
 
-		currentUser, err := srvs.AuthService.CurrentUser(authorization[1])
+		currentUser, err := srvs.AuthService.CurrentUser(authorization)
 		if err != nil {
 			return nil, err
 		}
