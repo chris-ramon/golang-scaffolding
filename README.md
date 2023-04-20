@@ -8,6 +8,8 @@ Contains the following example domains:
 - [x] Auth.
 - [x] JWT.
 - [x] GraphQL.
+- [ ] PostgreSQL.
+- [ ] Type Safe SQL.
 - [ ] Docker Compose.
 - [ ] Admin.
 - [ ] Unit tests.
