@@ -3,6 +3,7 @@ package auth
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
 
@@ -10,7 +11,7 @@ import (
 )
 
 type Service interface {
-	CurrentUser() (types.CurrentUser, error)
+	CurrentUser(jwtToken string) (*types.CurrentUser, error)
 }
 
 type handlers struct {
@@ -25,12 +26,15 @@ func (h *handlers) GetPing() httprouter.Handle {
 
 func (h *handlers) GetCurrentUser() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		u, err := h.service.CurrentUser()
+		authorization := strings.Split(r.Context().Value("Authorization").(string), " ")
+
+		u, err := h.service.CurrentUser(authorization[1])
 		if err != nil {
 			log.Printf("failed to find current user: %v", err)
 			http.Error(w, "failed to find current user", http.StatusInternalServerError)
 			return
 		}
+
 		w.Write([]byte(u.Username))
 	}
 }
