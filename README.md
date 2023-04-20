@@ -10,7 +10,7 @@ Contains the following example domains:
 - [x] GraphQL.
 - [ ] PostgreSQL.
 - [ ] Type Safe SQL.
-- [ ] Docker Compose.
+- [x] Docker Compose.
 - [ ] Live reload.
 - [ ] Admin.
 - [ ] Unit tests.
