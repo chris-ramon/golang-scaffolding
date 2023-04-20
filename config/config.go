@@ -7,6 +7,7 @@ type Config struct {
 
 func New(port uint, JWTSigningSecret string) *Config {
 	return &Config{
-		Port: port,
+		Port:             port,
+		JWTSigningSecret: JWTSigningSecret,
 	}
 }
