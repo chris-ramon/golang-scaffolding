@@ -5,7 +5,7 @@ import (
 	"github.com/chris-ramon/golang-scaffolding/domain/auth/types"
 )
 
-func CurrentUserFromTypeToAPI(currentUser types.CurrentUser) api.CurrentUser {
+func CurrentUserFromTypeToAPI(currentUser *types.CurrentUser) api.CurrentUser {
 	return api.CurrentUser{
 		ID:       currentUser.ID,
 		Username: currentUser.Username,

@@ -6,7 +6,7 @@ import (
 )
 
 type AuthService interface {
-	CurrentUser() (authTypes.CurrentUser, error)
+	CurrentUser(jwtToken string) (*authTypes.CurrentUser, error)
 	AuthUser(ctx context.Context, username string, pwd string) (*authTypes.CurrentUser, error)
 }
 
