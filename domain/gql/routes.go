@@ -1,6 +1,7 @@
 package gql
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/graphql-go/handler"
@@ -24,14 +25,18 @@ func (ro *routes) All() []route.Route {
 			HTTPMethod: "GET",
 			Path:       "/graphql",
 			Handler: func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-				ro.handlers.PostGraphQL().ServeHTTP(w, r)
+				ctx := context.WithValue(r.Context(), "Authorization", r.Header.Get("Authorization"))
+				r = r.WithContext(ctx)
+				ro.handlers.GetGraphQL().ServeHTTP(w, r)
 			},
 		},
 		route.Route{
 			HTTPMethod: "POST",
 			Path:       "/graphql",
 			Handler: func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-				ro.handlers.GetGraphQL().ServeHTTP(w, r)
+				ctx := context.WithValue(r.Context(), "Authorization", r.Header.Get("Authorization"))
+				r = r.WithContext(ctx)
+				ro.handlers.PostGraphQL().ServeHTTP(w, r)
 			},
 		},
 	}
