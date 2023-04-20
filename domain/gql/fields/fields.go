@@ -2,6 +2,7 @@ package fields
 
 import (
 	"github.com/graphql-go/graphql"
+	"strings"
 
 	"github.com/chris-ramon/golang-scaffolding/domain/auth/mappers"
 	"github.com/chris-ramon/golang-scaffolding/domain/gql/types"
@@ -26,7 +27,9 @@ var CurrentUserField = &graphql.Field{
 			return nil, nil
 		}
 
-		currentUser, err := srvs.AuthService.CurrentUser()
+		authorization := strings.Split(p.Context.Value("Authorization").(string), " ")
+
+		currentUser, err := srvs.AuthService.CurrentUser(authorization[1])
 		if err != nil {
 			return nil, err
 		}
