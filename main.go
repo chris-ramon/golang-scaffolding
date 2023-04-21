@@ -8,6 +8,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	"github.com/chris-ramon/golang-scaffolding/config"
+	"github.com/chris-ramon/golang-scaffolding/domain/admin"
 	"github.com/chris-ramon/golang-scaffolding/domain/auth"
 	"github.com/chris-ramon/golang-scaffolding/domain/gql"
 	"github.com/chris-ramon/golang-scaffolding/pkg/route"
@@ -33,9 +34,16 @@ func main() {
 
 	gqlRoutes := gql.NewRoutes(gqlHandlers)
 
+	adminHandlers, err := admin.NewHandlers()
+	if err != nil {
+		handleErr(err)
+	}
+	adminRoutes := admin.NewRoutes(adminHandlers)
+
 	routes := []route.Route{}
 	routes = append(routes, authRoutes.All()...)
 	routes = append(routes, gqlRoutes.All()...)
+	routes = append(routes, adminRoutes.All()...)
 
 	for _, r := range routes {
 		router.Handle(r.HTTPMethod, r.Path, r.Handler)
