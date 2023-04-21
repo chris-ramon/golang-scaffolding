@@ -1,3 +1,7 @@
+github.com/admin-golang/admin v0.0.0-20220720064250-fa4d88cf3085 h1:MEy2ZjShZ+E3+8LNyB+qEQ3cann0zquUNJ6M8q9HUtw=
+github.com/admin-golang/admin v0.0.0-20220720064250-fa4d88cf3085/go.mod h1:YvTVOmEXneh4MQsYiWPRdOSH8TjvTJFzwJY6DCct9XI=
+github.com/evanw/esbuild v0.12.17 h1:9B8cjTu7ZIvS9BQAowXxxe6WMwWvC9BbNq60N6kMrQI=
+github.com/evanw/esbuild v0.12.17/go.mod h1:y2AFBAGVelPqPodpdtxWWqe6n2jYf5FrsJbligmRmuw=
 github.com/golang-jwt/jwt/v5 v5.0.0-rc.2 h1:hXPcSazn8wKOfSb9y2m1bdgUMlDxVDarxh3lJVbC6JE=
 github.com/golang-jwt/jwt/v5 v5.0.0-rc.2/go.mod h1:pqrtFR0X4osieyHYxtmOUWsAWrfe1Q5UVIyoH402zdk=
 github.com/graphql-go/graphql v0.8.1 h1:p7/Ou/WpmulocJeEx7wjQy611rtXGQaAcXGqanuMMgc=
@@ -6,3 +10,5 @@ github.com/graphql-go/handler v0.2.3 h1:CANh8WPnl5M9uA25c2GBhPqJhE53Fg0Iue/fRNla
 github.com/graphql-go/handler v0.2.3/go.mod h1:leLF6RpV5uZMN1CdImAxuiayrYYhOk33bZciaUGaXeU=
 github.com/julienschmidt/httprouter v1.3.0 h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=
 github.com/julienschmidt/httprouter v1.3.0/go.mod h1:JR6WtHb+2LUe8TCKY3cZOxFyyO8IZAc4RVcycCCAKdM=
+golang.org/x/sys v0.0.0-20200501145240-bc7a7d42d5c3 h1:5B6i6EAiSYyejWfvc5Rc9BbI3rzIsrrXfAQBWnYfn+w=
+golang.org/x/sys v0.0.0-20200501145240-bc7a7d42d5c3/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
