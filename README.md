@@ -17,6 +17,6 @@ Contains the following example domains:
 - [ ] PostgreSQL.
 - [ ] Type Safe SQL.
 - [x] Docker Compose.
-- [ ] Live reload.
+- [x] Live reload.
 - [ ] Admin.
 - [ ] Unit tests.
