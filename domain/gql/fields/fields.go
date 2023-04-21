@@ -5,7 +5,6 @@ import (
 
 	"github.com/chris-ramon/golang-scaffolding/domain/auth/mappers"
 	"github.com/chris-ramon/golang-scaffolding/domain/gql/types"
-	"github.com/chris-ramon/golang-scaffolding/domain/internal/services"
 	"github.com/chris-ramon/golang-scaffolding/pkg/ctxutil"
 )
 
@@ -21,10 +20,9 @@ var CurrentUserField = &graphql.Field{
 	Name: "CurrentUser",
 	Type: types.UserType,
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-		rootValue := p.Info.RootValue.(map[string]interface{})
-		srvs, ok := rootValue["services"].(*services.Services)
-		if !ok {
-			return nil, nil
+		srvs, err := servicesFromResolveParams(p)
+		if err != nil {
+			return nil, err
 		}
 
 		authorization, err := ctxutil.AuthHeaderValueFromCtx(p.Context)
@@ -55,19 +53,19 @@ var AuthUserField = &graphql.Field{
 		},
 	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-		rootValue := p.Info.RootValue.(map[string]interface{})
-		srvs, ok := rootValue["services"].(*services.Services)
-		if !ok {
-			return nil, nil
+		srvs, err := servicesFromResolveParams(p)
+		if err != nil {
+			return nil, err
 		}
 
-		username, ok := p.Args["username"].(string)
-		if !ok {
-			return nil, nil
+		username, err := fieldFromArgs[string](p.Args, "username")
+		if err != nil {
+			return nil, err
 		}
-		password, ok := p.Args["password"].(string)
-		if !ok {
-			return nil, nil
+
+		password, err := fieldFromArgs[string](p.Args, "password")
+		if err != nil {
+			return nil, err
 		}
 
 		currentUser, err := srvs.AuthService.AuthUser(p.Context, username, password)
