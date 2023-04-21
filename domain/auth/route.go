@@ -9,6 +9,7 @@ import (
 type Handlers interface {
 	GetPing() httprouter.Handle
 	GetCurrentUser() httprouter.Handle
+	PostSignIn() httprouter.Handle
 }
 
 type routes struct {
@@ -26,6 +27,11 @@ func (r *routes) All() []route.Route {
 			HTTPMethod: "GET",
 			Path:       "/auth/current-user",
 			Handler:    r.handlers.GetCurrentUser(),
+		},
+		route.Route{
+			HTTPMethod: "POST",
+			Path:       "/auth/sign-in",
+			Handler:    r.handlers.PostSignIn(),
 		},
 	}
 }

@@ -48,7 +48,7 @@ func NewFormPage() (admin.Pager, error) {
 			},
 			Submit: admin.Submit{
 				Label:  "Sign In",
-				URL:    "/sign-in",
+				URL:    "/auth/sign-in",
 				Method: "POST",
 				OnSuccess: &admin.OnSubmitSuccess{
 					SetAppState:          true,

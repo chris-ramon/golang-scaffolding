@@ -1,6 +1,9 @@
 package auth
 
 import (
+	"context"
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -12,6 +15,7 @@ import (
 
 type Service interface {
 	CurrentUser(jwtToken string) (*types.CurrentUser, error)
+	AuthUser(ctx context.Context, username string, pwd string) (*types.CurrentUser, error)
 }
 
 type handlers struct {
@@ -42,6 +46,38 @@ func (h *handlers) GetCurrentUser() httprouter.Handle {
 		}
 
 		w.Write([]byte(u.Username))
+	}
+}
+
+func (h *handlers) PostSignIn() httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Printf("failed to read request body: %v", err)
+			http.Error(w, "failed to read request body", http.StatusInternalServerError)
+			return
+		}
+
+		var reqBodyJSON struct {
+			Email    string `json:"email"`
+			Password string `json:"password"`
+		}
+
+		if err := json.Unmarshal(b, &reqBodyJSON); err != nil {
+			log.Printf("failed to json unmarshal request body: %v", err)
+			http.Error(w, "failed to json unmarshal request body", http.StatusInternalServerError)
+			return
+		}
+
+		u, err := h.service.AuthUser(r.Context(), reqBodyJSON.Email, reqBodyJSON.Password)
+		if err != nil {
+			log.Printf("failed to find current user: %v", err)
+			http.Error(w, "failed to find current user", http.StatusInternalServerError)
+			return
+		}
+
+		w.Write([]byte(u.Username))
+
 	}
 }
 
