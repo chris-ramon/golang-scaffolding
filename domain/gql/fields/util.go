@@ -18,3 +18,13 @@ func servicesFromResolveParams(p graphql.ResolveParams) (*services.Services, err
 
 	return srvs, nil
 }
+
+func fieldFromArgs[T any](args map[string]interface{}, fieldName string) (T, error) {
+	field, ok := args[fieldName].(T)
+
+	if !ok {
+		return *new(T), errors.New("invalid type")
+	}
+
+	return field, nil
+}
