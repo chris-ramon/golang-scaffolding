@@ -7,14 +7,14 @@ import (
 	"strings"
 )
 
-const authHeaderName = "Authorization"
+const AuthHeaderName = "Authorization"
 
 func WithAuthHeader(ctx context.Context, header http.Header) context.Context {
-	return context.WithValue(ctx, authHeaderName, header.Get(authHeaderName))
+	return context.WithValue(ctx, AuthHeaderName, header.Get(AuthHeaderName))
 }
 
 func AuthHeaderValueFromCtx(ctx context.Context) (string, error) {
-	authorizationWithBearer := strings.Split(ctx.Value(authHeaderName).(string), " ")
+	authorizationWithBearer := strings.Split(ctx.Value(AuthHeaderName).(string), " ")
 	if len(authorizationWithBearer) != 2 {
 		return "", errors.New("invalid authorization header value")
 	}
