@@ -5,6 +5,7 @@ import (
 
 	"github.com/admin-golang/admin"
 
+	"github.com/chris-ramon/golang-scaffolding/domain/admin/dashboard"
 	"github.com/chris-ramon/golang-scaffolding/domain/admin/layout"
 	"github.com/chris-ramon/golang-scaffolding/domain/admin/signin"
 )
@@ -25,6 +26,7 @@ func NewHandlers() (*handlers, error) {
 
 	pages := admin.Pages{
 		signInFormPage,
+		dashboard.NewPage(),
 	}
 
 	adminHandler := admin.New(&admin.Config{
