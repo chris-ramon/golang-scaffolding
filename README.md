@@ -18,5 +18,5 @@ Contains the following example domains:
 - [ ] Type Safe SQL.
 - [x] Docker Compose.
 - [x] Live reload.
-- [ ] Admin.
+- [x] Admin.
 - [ ] Unit tests.
