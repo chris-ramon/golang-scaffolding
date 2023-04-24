@@ -11,6 +11,27 @@ services:
       - go-bin:/go/bin:cached
     ports:
       - "8080:8080"
+    networks:
+      - gateway_network
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: local
+    ports:
+      - "5432:5432"
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gateway_network
 volumes:
   go-pkg-mod:
   go-bin:
+networks:
+  gateway_network:
