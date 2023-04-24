@@ -16,11 +16,11 @@ type DBConfig struct {
 
 func New(port uint) *Config {
 	return &Config{
-		Port: port,
+		Port: os.Getenv("PORT"),
 	}
 }
 
-func NewDBConfig(user, pwd, host, name, sslMode string) *DBConfig {
+func NewDBConfig() *DBConfig {
 	return &DBConfig{
 		User:    os.Getenv("DB_USER"),
 		PWD:     os.Getenv("DB_PWD"),
