@@ -4,18 +4,18 @@ services:
   app:
     working_dir: /app
     image: golang:1.20
-    command: sh -c "./bin/dev.sh"
+    command: sh -c "DB_USER=admin DB_PWD=admin DB_HOST=db DB_NAME=local DB_SSL_MODE=disable ./bin/_dev.sh"
     volumes:
       - ./:/app
       - go-pkg-mod:/go/pkg/mod:cached
       - go-bin:/go/bin:cached
     ports:
       - "8080:8080"
-    networks:
-      - gateway_network
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - gateway_network
   db:
     image: postgres:14
     environment:
@@ -34,6 +34,7 @@ services:
     networks:
       - gateway_network
 volumes:
+  database:
   go-pkg-mod:
   go-bin:
 networks:
