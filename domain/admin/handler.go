@@ -8,6 +8,7 @@ import (
 	"github.com/chris-ramon/golang-scaffolding/domain/admin/dashboard"
 	"github.com/chris-ramon/golang-scaffolding/domain/admin/layout"
 	"github.com/chris-ramon/golang-scaffolding/domain/admin/signin"
+	"github.com/chris-ramon/golang-scaffolding/domain/admin/user"
 )
 
 type handlers struct {
@@ -27,6 +28,7 @@ func NewHandlers() (*handlers, error) {
 	pages := admin.Pages{
 		signInFormPage,
 		dashboard.NewPage(),
+		user.NewList(),
 	}
 
 	adminHandler := admin.New(&admin.Config{
