@@ -3,7 +3,7 @@ package config
 import "os"
 
 type Config struct {
-	Port uint
+	Port string
 }
 
 type DBConfig struct {
@@ -14,7 +14,7 @@ type DBConfig struct {
 	SSLMode string
 }
 
-func New(port uint) *Config {
+func New() *Config {
 	return &Config{
 		Port: os.Getenv("PORT"),
 	}

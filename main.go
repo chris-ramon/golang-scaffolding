@@ -66,6 +66,6 @@ func main() {
 		router.Handle(r.HTTPMethod, r.Path, r.Handler)
 	}
 
-	log.Printf("server running on port :%d", conf.Port)
-	log.Println(http.ListenAndServe(fmt.Sprintf(":%d", conf.Port), router))
+	log.Printf("server running on port :%s", conf.Port)
+	log.Println(http.ListenAndServe(fmt.Sprintf(":%s", conf.Port), router))
 }
