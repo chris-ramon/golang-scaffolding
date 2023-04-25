@@ -5,6 +5,7 @@ import (
 
 	"github.com/chris-ramon/golang-scaffolding/domain/auth/mappers"
 	"github.com/chris-ramon/golang-scaffolding/domain/gql/types"
+	usersMappers "github.com/chris-ramon/golang-scaffolding/domain/users/mappers"
 	"github.com/chris-ramon/golang-scaffolding/pkg/ctxutil"
 )
 
@@ -74,5 +75,25 @@ var AuthUserField = &graphql.Field{
 		}
 
 		return currentUser, nil
+	},
+}
+
+var UsersField = &graphql.Field{
+	Name: "Users",
+	Type: graphql.NewList(types.UserType),
+	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+		srvs, err := servicesFromResolveParams(p)
+		if err != nil {
+			return nil, err
+		}
+
+		users, err := srvs.UserService.FindUsers(p.Context)
+		if err != nil {
+			return nil, err
+		}
+
+		usersAPI := usersMappers.UsersFromTypeToAPI(users)
+
+		return usersAPI, nil
 	},
 }
