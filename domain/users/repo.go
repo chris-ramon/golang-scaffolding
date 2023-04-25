@@ -2,18 +2,40 @@ package users
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/chris-ramon/golang-scaffolding/db"
+	"github.com/chris-ramon/golang-scaffolding/db/models"
 	userTypes "github.com/chris-ramon/golang-scaffolding/domain/users/types"
 )
 
 type repo struct {
+	db db.DB
 }
 
 func (r *repo) FindUsers(ctx context.Context) ([]*userTypes.User, error) {
-	return nil, nil
+	args := models.ListUsersParams{
+		Limit:  10,
+		Offset: 10,
+	}
+
+	users, err := r.db.Queries().ListUsers(ctx, args)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var result []*userTypes.User
+
+	for _, user := range users {
+		result = append(result, &userTypes.User{
+			ID: fmt.Sprintf("%d", user.ID),
+		})
+	}
+
+	return result, nil
 }
 
 func NewRepo(db db.DB) *repo {
-	return &repo{}
+	return &repo{db: db}
 }
