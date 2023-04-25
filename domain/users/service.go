@@ -3,13 +3,13 @@ package users
 import (
 	"context"
 
-	"github.com/chris-ramon/golang-scaffolding/domain/auth/types"
+	userTypes "github.com/chris-ramon/golang-scaffolding/domain/users/types"
 )
 
 type service struct {
 }
 
-func (s *service) FindUsers(ctx context.Context) (*[]types.CurrentUser, error) {
+func (s *service) FindUsers(ctx context.Context) ([]*userTypes.User, error) {
 	return nil, nil
 }
 
@@ -18,5 +18,5 @@ func NewService(repo Repo) *service {
 }
 
 type Repo interface {
-	FindUsers(ctx context.Context) (*[]types.CurrentUser, error)
+	FindUsers(ctx context.Context) ([]*userTypes.User, error)
 }

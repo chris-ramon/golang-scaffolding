@@ -4,13 +4,13 @@ import (
 	"context"
 
 	"github.com/chris-ramon/golang-scaffolding/db"
-	"github.com/chris-ramon/golang-scaffolding/domain/auth/types"
+	userTypes "github.com/chris-ramon/golang-scaffolding/domain/users/types"
 )
 
 type repo struct {
 }
 
-func (r *repo) FindUsers(ctx context.Context) (*[]types.CurrentUser, error) {
+func (r *repo) FindUsers(ctx context.Context) ([]*userTypes.User, error) {
 	return nil, nil
 }
 

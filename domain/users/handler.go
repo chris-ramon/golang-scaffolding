@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/chris-ramon/golang-scaffolding/domain/auth/types"
+	userTypes "github.com/chris-ramon/golang-scaffolding/domain/users/types"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -22,5 +22,5 @@ func NewHandlers(usersService Service) (*handlers, error) {
 }
 
 type Service interface {
-	FindUsers(ctx context.Context) (*[]types.CurrentUser, error)
+	FindUsers(ctx context.Context) ([]*userTypes.User, error)
 }

@@ -49,7 +49,7 @@ func main() {
 	authHandlers := auth.NewHandlers(authService)
 	authRoutes := auth.NewRoutes(authHandlers)
 
-	gqlHandlers, err := gql.NewHandlers(authService)
+	gqlHandlers, err := gql.NewHandlers(authService, usersService)
 	if err != nil {
 		handleErr(err)
 	}
