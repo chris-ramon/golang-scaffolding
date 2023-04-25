@@ -7,14 +7,15 @@ import (
 )
 
 type service struct {
+	repo Repo
 }
 
 func (s *service) FindUsers(ctx context.Context) ([]*userTypes.User, error) {
-	return nil, nil
+	return s.repo.FindUsers(ctx)
 }
 
 func NewService(repo Repo) *service {
-	return &service{}
+	return &service{repo: repo}
 }
 
 type Repo interface {
