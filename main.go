@@ -29,6 +29,12 @@ func main() {
 		handleErr(err)
 	}
 
+	if err := db.Migrate(); err != nil {
+		handleErr(err)
+	} else {
+		log.Println("successfully run migrations")
+	}
+
 	router := httprouter.New()
 
 	usersRepo := users.NewRepo(db)
