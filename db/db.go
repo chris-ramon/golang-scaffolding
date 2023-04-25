@@ -12,13 +12,15 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/chris-ramon/golang-scaffolding/config"
+	"github.com/chris-ramon/golang-scaffolding/db/models"
 )
 
 //go:embed migrations/*.sql
 var fs embed.FS
 
 type db struct {
-	sqlDB *sql.DB
+	sqlDB   *sql.DB
+	queries *models.Queries
 }
 
 func (d *db) Ping() error {
@@ -52,6 +54,10 @@ func (d *db) Migrate() error {
 	return nil
 }
 
+func (db *db) Queries() *models.Queries {
+	return db.queries
+}
+
 func New(dbConfig *config.DBConfig) (*db, error) {
 	connStr := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=%s",
 		dbConfig.User, dbConfig.PWD, dbConfig.Host, dbConfig.Name, dbConfig.SSLMode)
@@ -61,8 +67,11 @@ func New(dbConfig *config.DBConfig) (*db, error) {
 		return nil, err
 	}
 
+	queries := models.New(_db)
+
 	return &db{
-		sqlDB: _db,
+		sqlDB:   _db,
+		queries: queries,
 	}, nil
 }
 
@@ -70,4 +79,5 @@ type DB interface {
 	Ping() error
 	Close() error
 	Migrate() error
+	Queries() *models.Queries
 }
