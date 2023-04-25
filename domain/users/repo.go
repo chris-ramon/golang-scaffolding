@@ -14,6 +14,6 @@ func (r *repo) FindUsers(ctx context.Context) (*[]types.CurrentUser, error) {
 	return nil, nil
 }
 
-func NewRepo(db *db.DB) *repo {
+func NewRepo(db db.DB) *repo {
 	return &repo{}
 }
