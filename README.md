@@ -9,14 +9,14 @@ docker-compose up
 ```
 
 Contains the following example domains:
-- [ ] Env Variables.
+- [x] Env Variables.
 - [x] Config.
 - [x] Auth.
 - [x] JWT.
 - [x] GraphQL.
-- [ ] PostgreSQL.
-- [ ] Type Safe SQL.
+- [x] PostgreSQL.
+- [x] Type Safe SQL.
 - [x] Docker Compose.
 - [x] Live reload.
 - [x] Admin.
-- [ ] Unit tests.
+- [x] Unit tests.
