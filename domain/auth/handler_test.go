@@ -167,6 +167,12 @@ func TestPostSignIn(t *testing.T) {
 	}
 }
 
+type testReaderError int
+
+func (testReaderError) Read(p []byte) (int, error) {
+	return 0, errors.New("test error")
+}
+
 func TestPostSignIn_BodyError(t *testing.T) {
 	srvMock := &serviceMock{
 		authUser: func(ctx context.Context, username string, pwd string) (*types.CurrentUser, error) {
@@ -183,15 +189,61 @@ func TestPostSignIn_BodyError(t *testing.T) {
 	req := httptest.NewRequest(
 		"POST",
 		"/auth/sign-in",
-		bytes.NewBuffer([]byte(`{invalid}`)),
+		testReaderError(0),
 	)
 	w := httptest.NewRecorder()
 	params := httprouter.Params{}
 
 	h.PostSignIn()(w, req, params)
 
-	expectedBody := "failed to json unmarshal request body"
+	expectedBody := "failed to read request body"
 	if !strings.Contains(w.Body.String(), expectedBody) {
 		t.Fatalf("expected: %v, got: %v", expectedBody, w.Body.String())
+	}
+}
+
+func TestPostSignIn_JSONUnmarshal(t *testing.T) {
+	type testCase struct {
+		name           string
+		srvMock        *serviceMock
+		request        *http.Request
+		responseWriter *httptest.ResponseRecorder
+		params         httprouter.Params
+		handler        func() httprouter.Handle
+		expectedBody   string
+	}
+
+	h := &handlers{}
+
+	testCases := []testCase{
+		{
+			name: "test json unmarshal error",
+			srvMock: &serviceMock{
+				authUser: func(ctx context.Context, username string, pwd string) (*types.CurrentUser, error) {
+					return &types.CurrentUser{
+						Username: "test user",
+					}, nil
+				},
+			},
+			request: httptest.NewRequest(
+				"POST",
+				"/auth/sign-in",
+				bytes.NewBuffer([]byte(`{invalid}`)),
+			),
+			responseWriter: httptest.NewRecorder(),
+			params:         httprouter.Params{},
+			handler:        h.PostSignIn,
+			expectedBody:   "failed to json unmarshal request body",
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			h.service = testCase.srvMock
+			testCase.handler()(testCase.responseWriter, testCase.request, testCase.params)
+			if !strings.Contains(testCase.responseWriter.Body.String(), testCase.expectedBody) {
+				t.Fatalf("expected: %v, got: %v", testCase.expectedBody, testCase.responseWriter.Body.String())
+			}
+		})
 	}
 }
