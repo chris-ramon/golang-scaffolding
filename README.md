@@ -1,4 +1,4 @@
-# golang-scaffolding
+# golang-scaffolding [![Tests](https://github.com/chris-ramon/golang-scaffolding/actions/workflows/tests.yml/badge.svg)](https://github.com/chris-ramon/golang-scaffolding/actions/workflows/tests.yml) [![codecov](https://codecov.io/gh/chris-ramon/golang-scaffolding/branch/main/graph/badge.svg?token=VUGFGVC37X)](https://codecov.io/gh/chris-ramon/golang-scaffolding)
 
 A golang scaffolding for getting started new projects.
 
