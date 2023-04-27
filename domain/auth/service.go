@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"crypto/rsa"
-	"log"
 	"os"
 	"time"
 
@@ -13,6 +12,8 @@ import (
 )
 
 type service struct {
+	signKey   *rsa.PrivateKey
+	verifyKey *rsa.PublicKey
 }
 
 type customClaims struct {
@@ -20,36 +21,9 @@ type customClaims struct {
 	jwt.RegisteredClaims
 }
 
-var (
-	verifyKey *rsa.PublicKey
-	signKey   *rsa.PrivateKey
-)
-
-func init() {
-	handleError := func(err error) {
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	signBytes, err := os.ReadFile("./domain/auth/app.rsa") // openssl genrsa -out app.rsa 2048
-	handleError(err)
-
-	sKey, err := jwt.ParseRSAPrivateKeyFromPEM(signBytes)
-	handleError(err)
-	signKey = sKey
-
-	verifyBytes, err := os.ReadFile("./domain/auth/app.rsa.pub") // openssl rsa -in app.rsa -pubout > app.rsa.pub
-	handleError(err)
-
-	vKey, err := jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
-	handleError(err)
-	verifyKey = vKey
-}
-
 func (s *service) CurrentUser(jwtToken string) (*types.CurrentUser, error) {
 	parsedJWTToken, err := jwt.ParseWithClaims(jwtToken, &customClaims{}, func(t *jwt.Token) (interface{}, error) {
-		return verifyKey, nil
+		return s.verifyKey, nil
 	})
 	if err != nil {
 		return nil, err
@@ -76,7 +50,7 @@ func (s *service) AuthUser(ctx context.Context, username string, pwd string) (*t
 		},
 	}
 
-	jwtToken, err := t.SignedString(signKey)
+	jwtToken, err := t.SignedString(s.signKey)
 	if err != nil {
 		return nil, err
 	}
@@ -91,6 +65,29 @@ func (s *service) FindUsers(ctx context.Context) ([]*types.CurrentUser, error) {
 	return nil, nil
 }
 
-func NewService() *service {
-	return &service{}
+func NewService() (*service, error) {
+	signBytes, err := os.ReadFile("./domain/auth/app.rsa") // openssl genrsa -out app.rsa 2048
+	if err != nil {
+		return nil, err
+	}
+
+	sKey, err := jwt.ParseRSAPrivateKeyFromPEM(signBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	verifyBytes, err := os.ReadFile("./domain/auth/app.rsa.pub") // openssl rsa -in app.rsa -pubout > app.rsa.pub
+	if err != nil {
+		return nil, err
+	}
+
+	vKey, err := jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return &service{
+		signKey:   sKey,
+		verifyKey: vKey,
+	}, nil
 }

@@ -45,7 +45,10 @@ func main() {
 	}
 	usersRoutes := users.NewRoutes(usersHandlers)
 
-	authService := auth.NewService()
+	authService, err := auth.NewService()
+	if err != nil {
+		handleErr(err)
+	}
 	authHandlers := auth.NewHandlers(authService)
 	authRoutes := auth.NewRoutes(authHandlers)
 
