@@ -1,0 +1,32 @@
+name: Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  Tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: ["1.17.1", "1.16.8"]
+    name: Go ${{ matrix.go }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Tests
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+      - run: go test ./... -coverprofile=cov.out -covermode=atomic
+      - name: Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./cov.out
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          verbose: true
