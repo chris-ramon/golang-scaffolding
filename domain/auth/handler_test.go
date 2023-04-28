@@ -14,6 +14,12 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+type testReaderError int
+
+func (testReaderError) Read(p []byte) (int, error) {
+	return 0, errors.New("test error")
+}
+
 type serviceMock struct {
 	currentUser func(jwtToken string) (*types.CurrentUser, error)
 	authUser    func(ctx context.Context, username string, pwd string) (*types.CurrentUser, error)
@@ -50,94 +56,86 @@ func TestGetPing(t *testing.T) {
 }
 
 func TestGetCurrentUser(t *testing.T) {
-	srvMock := &serviceMock{
-		currentUser: func(jwtToken string) (*types.CurrentUser, error) {
-			return &types.CurrentUser{
-				Username: "test user",
-			}, nil
+	type testCase struct {
+		name               string
+		srvMock            *serviceMock
+		request            *http.Request
+		responseWriter     *httptest.ResponseRecorder
+		params             httprouter.Params
+		handler            func() httprouter.Handle
+		header             http.Header
+		expectedBody       string
+		expectedStatusCode uint
+	}
+
+	h := &handlers{}
+	header := map[string][]string{
+		"Authorization": []string{"Bearer Test-JWT-Token"},
+	}
+
+	testCases := []testCase{
+		{
+			name: "success",
+			srvMock: &serviceMock{
+				currentUser: func(jwtToken string) (*types.CurrentUser, error) {
+					return &types.CurrentUser{
+						Username: "test user",
+					}, nil
+				},
+			},
+			request:            httptest.NewRequest("GET", "/auth/current-user", nil),
+			responseWriter:     httptest.NewRecorder(),
+			params:             httprouter.Params{},
+			handler:            h.GetCurrentUser,
+			header:             header,
+			expectedBody:       "test user",
+			expectedStatusCode: http.StatusOK,
 		},
-		authUser: func(ctx context.Context, username string, pwd string) (*types.CurrentUser, error) {
-			return nil, nil
+		{
+			name:               "auth header error",
+			srvMock:            &serviceMock{},
+			request:            httptest.NewRequest("GET", "/auth/current-user", nil),
+			responseWriter:     httptest.NewRecorder(),
+			params:             httprouter.Params{},
+			handler:            h.GetCurrentUser,
+			header:             map[string][]string{},
+			expectedBody:       "failed to get authorization header",
+			expectedStatusCode: http.StatusInternalServerError,
+		},
+		{
+			name: "current user error",
+			srvMock: &serviceMock{
+				currentUser: func(jwtToken string) (*types.CurrentUser, error) {
+					return nil, errors.New("test error")
+				},
+			},
+			request:            httptest.NewRequest("GET", "/auth/current-user", nil),
+			responseWriter:     httptest.NewRecorder(),
+			params:             httprouter.Params{},
+			handler:            h.GetCurrentUser,
+			header:             header,
+			expectedBody:       "failed to find current user",
+			expectedStatusCode: http.StatusInternalServerError,
 		},
 	}
 
-	h := &handlers{
-		service: srvMock,
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			h.service = testCase.srvMock
+
+			for k, v := range testCase.header {
+				if len(v) > 0 {
+					testCase.request.Header.Set(k, v[0])
+				}
+			}
+
+			testCase.handler()(testCase.responseWriter, testCase.request, testCase.params)
+
+			if !strings.Contains(testCase.responseWriter.Body.String(), testCase.expectedBody) {
+				t.Fatalf("expected: %v, got: %v", testCase.expectedBody, testCase.responseWriter.Body.String())
+			}
+		})
 	}
-
-	req := httptest.NewRequest("GET", "/auth/current-user", nil)
-	req.Header.Set("Authorization", "Bearer Test-JWT-Token")
-	w := httptest.NewRecorder()
-	params := httprouter.Params{}
-
-	h.GetCurrentUser()(w, req, params)
-
-	body, err := io.ReadAll(w.Result().Body)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if string(body) != "test user" {
-		t.Fatalf("expected: ok, got: %s", body)
-	}
-}
-
-func TestGetCurrentUser_AuthHeaderError(t *testing.T) {
-	srvMock := &serviceMock{}
-
-	h := &handlers{
-		service: srvMock,
-	}
-
-	req := httptest.NewRequest("GET", "/auth/current-user", nil)
-	w := httptest.NewRecorder()
-	params := httprouter.Params{}
-
-	h.GetCurrentUser()(w, req, params)
-
-	expectedBody := "failed to get authorization header"
-	if !strings.Contains(w.Body.String(), expectedBody) {
-		t.Fatalf("expected: %v, got: %v", expectedBody, w.Body.String())
-	}
-
-	expectedStatusCode := http.StatusInternalServerError
-	if w.Code != expectedStatusCode {
-		t.Fatalf("expected: %v, got: %v", expectedStatusCode, w.Code)
-	}
-}
-
-func TestGetCurrentUser_CurrentUserError(t *testing.T) {
-	srvMock := &serviceMock{
-		currentUser: func(jwtToken string) (*types.CurrentUser, error) {
-			return nil, errors.New("test error")
-		},
-	}
-
-	h := &handlers{
-		service: srvMock,
-	}
-
-	req := httptest.NewRequest("GET", "/auth/current-user", nil)
-	req.Header.Set("Authorization", "Bearer Test-JWT-Token")
-	w := httptest.NewRecorder()
-	params := httprouter.Params{}
-
-	h.GetCurrentUser()(w, req, params)
-
-	expectedBody := "failed to find current user"
-	if !strings.Contains(w.Body.String(), expectedBody) {
-		t.Fatalf("expected: %v, got: %v", expectedBody, w.Body.String())
-	}
-
-	expectedStatusCode := http.StatusInternalServerError
-	if w.Code != expectedStatusCode {
-		t.Fatalf("expected: %v, got: %v", expectedStatusCode, w.Code)
-	}
-}
-
-type testReaderError int
-
-func (testReaderError) Read(p []byte) (int, error) {
-	return 0, errors.New("test error")
 }
 
 func TestPostSignIn(t *testing.T) {
