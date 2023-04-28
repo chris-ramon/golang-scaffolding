@@ -238,3 +238,10 @@ func TestPostSignIn(t *testing.T) {
 		})
 	}
 }
+
+func TestNewHandlers(t *testing.T) {
+	srvMock := &serviceMock{}
+	if handlers := NewHandlers(srvMock); handlers == nil {
+		t.Fatalf("unexpected nil value")
+	}
+}
