@@ -134,75 +134,13 @@ func TestGetCurrentUser_CurrentUserError(t *testing.T) {
 	}
 }
 
-func TestPostSignIn(t *testing.T) {
-	srvMock := &serviceMock{
-		authUser: func(ctx context.Context, username string, pwd string) (*types.CurrentUser, error) {
-			return &types.CurrentUser{
-				Username: "test user",
-			}, nil
-		},
-	}
-
-	h := &handlers{
-		service: srvMock,
-	}
-
-	req := httptest.NewRequest(
-		"POST",
-		"/auth/sign-in",
-		bytes.NewBuffer([]byte(`{"email":"test@test.com","password":"test-pwd"}`)),
-	)
-	req.Header.Set("Authorization", "Bearer Test-JWT-Token")
-	w := httptest.NewRecorder()
-	params := httprouter.Params{}
-
-	h.PostSignIn()(w, req, params)
-
-	body, err := io.ReadAll(w.Result().Body)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if string(body) != "test user" {
-		t.Fatalf("expected: ok, got: %s", body)
-	}
-}
-
 type testReaderError int
 
 func (testReaderError) Read(p []byte) (int, error) {
 	return 0, errors.New("test error")
 }
 
-func TestPostSignIn_BodyError(t *testing.T) {
-	srvMock := &serviceMock{
-		authUser: func(ctx context.Context, username string, pwd string) (*types.CurrentUser, error) {
-			return &types.CurrentUser{
-				Username: "test user",
-			}, nil
-		},
-	}
-
-	h := &handlers{
-		service: srvMock,
-	}
-
-	req := httptest.NewRequest(
-		"POST",
-		"/auth/sign-in",
-		testReaderError(0),
-	)
-	w := httptest.NewRecorder()
-	params := httprouter.Params{}
-
-	h.PostSignIn()(w, req, params)
-
-	expectedBody := "failed to read request body"
-	if !strings.Contains(w.Body.String(), expectedBody) {
-		t.Fatalf("expected: %v, got: %v", expectedBody, w.Body.String())
-	}
-}
-
-func TestPostSignIn_JSONUnmarshal(t *testing.T) {
+func TestPostSignIn(t *testing.T) {
 	type testCase struct {
 		name           string
 		srvMock        *serviceMock
@@ -216,6 +154,44 @@ func TestPostSignIn_JSONUnmarshal(t *testing.T) {
 	h := &handlers{}
 
 	testCases := []testCase{
+		{
+			name: "success",
+			srvMock: &serviceMock{
+				authUser: func(ctx context.Context, username string, pwd string) (*types.CurrentUser, error) {
+					return &types.CurrentUser{
+						Username: "test user",
+					}, nil
+				},
+			},
+			request: httptest.NewRequest(
+				"POST",
+				"/auth/sign-in",
+				bytes.NewBuffer([]byte(`{"email":"test@test.com","password":"test-pwd"}`)),
+			),
+			responseWriter: httptest.NewRecorder(),
+			params:         httprouter.Params{},
+			handler:        h.PostSignIn,
+			expectedBody:   "test user",
+		},
+		{
+			name: "test body error",
+			srvMock: &serviceMock{
+				authUser: func(ctx context.Context, username string, pwd string) (*types.CurrentUser, error) {
+					return &types.CurrentUser{
+						Username: "test user",
+					}, nil
+				},
+			},
+			request: httptest.NewRequest(
+				"POST",
+				"/auth/sign-in",
+				testReaderError(0),
+			),
+			responseWriter: httptest.NewRecorder(),
+			params:         httprouter.Params{},
+			handler:        h.PostSignIn,
+			expectedBody:   "failed to read request body",
+		},
 		{
 			name: "test json unmarshal error",
 			srvMock: &serviceMock{
@@ -234,6 +210,23 @@ func TestPostSignIn_JSONUnmarshal(t *testing.T) {
 			params:         httprouter.Params{},
 			handler:        h.PostSignIn,
 			expectedBody:   "failed to json unmarshal request body",
+		},
+		{
+			name: "test auth user error",
+			srvMock: &serviceMock{
+				authUser: func(ctx context.Context, username string, pwd string) (*types.CurrentUser, error) {
+					return nil, errors.New("test error")
+				},
+			},
+			request: httptest.NewRequest(
+				"POST",
+				"/auth/sign-in",
+				bytes.NewBuffer([]byte(`{"email":"test@test.com","password":"test-pwd"}`)),
+			),
+			responseWriter: httptest.NewRecorder(),
+			params:         httprouter.Params{},
+			handler:        h.PostSignIn,
+			expectedBody:   "failed to find current user",
 		},
 	}
 
