@@ -3,13 +3,19 @@ package auth
 import (
 	"context"
 	"crypto/rsa"
-	"os"
+	_ "embed"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/chris-ramon/golang-scaffolding/domain/auth/types"
 )
+
+//go:embed app.rsa
+var appRsa []byte // openssl genrsa -out app.rsa 2048
+
+//go:embed app.rsa.pub
+var appRsaPub []byte // openssl rsa -in app.rsa -pubout > app.rsa.pub
 
 type service struct {
 	signKey   *rsa.PrivateKey
@@ -66,20 +72,14 @@ func (s *service) FindUsers(ctx context.Context) ([]*types.CurrentUser, error) {
 }
 
 func NewService() (*service, error) {
-	signBytes, err := os.ReadFile("./domain/auth/app.rsa") // openssl genrsa -out app.rsa 2048
-	if err != nil {
-		return nil, err
-	}
+	signBytes := appRsa
 
 	sKey, err := jwt.ParseRSAPrivateKeyFromPEM(signBytes)
 	if err != nil {
 		return nil, err
 	}
 
-	verifyBytes, err := os.ReadFile("./domain/auth/app.rsa.pub") // openssl rsa -in app.rsa -pubout > app.rsa.pub
-	if err != nil {
-		return nil, err
-	}
+	verifyBytes := appRsaPub
 
 	vKey, err := jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
 	if err != nil {
