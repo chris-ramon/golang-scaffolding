@@ -67,10 +67,6 @@ func (s *service) AuthUser(ctx context.Context, username string, pwd string) (*t
 	}, nil
 }
 
-func (s *service) FindUsers(ctx context.Context) ([]*types.CurrentUser, error) {
-	return nil, nil
-}
-
 func NewService() (*service, error) {
 	signBytes := appRsa
 
