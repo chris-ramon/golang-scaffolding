@@ -62,10 +62,6 @@ func TestGetCurrentUser(t *testing.T) {
 		expectedStatusCode uint
 	}
 
-	header := map[string][]string{
-		"Authorization": []string{"Bearer Test-JWT-Token"},
-	}
-
 	testCases := []testCase{
 		{
 			name: "success",
@@ -76,10 +72,12 @@ func TestGetCurrentUser(t *testing.T) {
 					}, nil
 				},
 			},
-			request:            httptest.NewRequest("GET", "/auth/current-user", nil),
-			responseWriter:     httptest.NewRecorder(),
-			params:             httprouter.Params{},
-			header:             header,
+			request:        httptest.NewRequest("GET", "/auth/current-user", nil),
+			responseWriter: httptest.NewRecorder(),
+			params:         httprouter.Params{},
+			header: map[string][]string{
+				"Authorization": []string{"Bearer Test-JWT-Token"},
+			},
 			expectedBody:       "test user",
 			expectedStatusCode: http.StatusOK,
 		},
@@ -100,10 +98,12 @@ func TestGetCurrentUser(t *testing.T) {
 					return nil, errors.New("test error")
 				},
 			},
-			request:            httptest.NewRequest("GET", "/auth/current-user", nil),
-			responseWriter:     httptest.NewRecorder(),
-			params:             httprouter.Params{},
-			header:             header,
+			request:        httptest.NewRequest("GET", "/auth/current-user", nil),
+			responseWriter: httptest.NewRecorder(),
+			params:         httprouter.Params{},
+			header: map[string][]string{
+				"Authorization": []string{"Bearer Test-JWT-Token"},
+			},
 			expectedBody:       "failed to find current user",
 			expectedStatusCode: http.StatusInternalServerError,
 		},
