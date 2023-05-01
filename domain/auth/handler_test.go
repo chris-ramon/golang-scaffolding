@@ -34,12 +34,7 @@ func (s *serviceMock) AuthUser(ctx context.Context, username string, pwd string)
 }
 
 func TestGetPing(t *testing.T) {
-	srvMock := &serviceMock{}
-
-	h := &handlers{
-		service: srvMock,
-	}
-
+	h := NewHandlers(&serviceMock{})
 	req := httptest.NewRequest("GET", "/ping", nil)
 	w := httptest.NewRecorder()
 	params := httprouter.Params{}
@@ -62,13 +57,11 @@ func TestGetCurrentUser(t *testing.T) {
 		request            *http.Request
 		responseWriter     *httptest.ResponseRecorder
 		params             httprouter.Params
-		handler            func() httprouter.Handle
 		header             http.Header
 		expectedBody       string
 		expectedStatusCode uint
 	}
 
-	h := &handlers{}
 	header := map[string][]string{
 		"Authorization": []string{"Bearer Test-JWT-Token"},
 	}
@@ -86,7 +79,6 @@ func TestGetCurrentUser(t *testing.T) {
 			request:            httptest.NewRequest("GET", "/auth/current-user", nil),
 			responseWriter:     httptest.NewRecorder(),
 			params:             httprouter.Params{},
-			handler:            h.GetCurrentUser,
 			header:             header,
 			expectedBody:       "test user",
 			expectedStatusCode: http.StatusOK,
@@ -97,7 +89,6 @@ func TestGetCurrentUser(t *testing.T) {
 			request:            httptest.NewRequest("GET", "/auth/current-user", nil),
 			responseWriter:     httptest.NewRecorder(),
 			params:             httprouter.Params{},
-			handler:            h.GetCurrentUser,
 			header:             map[string][]string{},
 			expectedBody:       "failed to get authorization header",
 			expectedStatusCode: http.StatusInternalServerError,
@@ -112,7 +103,6 @@ func TestGetCurrentUser(t *testing.T) {
 			request:            httptest.NewRequest("GET", "/auth/current-user", nil),
 			responseWriter:     httptest.NewRecorder(),
 			params:             httprouter.Params{},
-			handler:            h.GetCurrentUser,
 			header:             header,
 			expectedBody:       "failed to find current user",
 			expectedStatusCode: http.StatusInternalServerError,
@@ -121,7 +111,7 @@ func TestGetCurrentUser(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			h.service = testCase.srvMock
+			h := NewHandlers(testCase.srvMock)
 
 			for k, v := range testCase.header {
 				if len(v) > 0 {
@@ -129,7 +119,7 @@ func TestGetCurrentUser(t *testing.T) {
 				}
 			}
 
-			testCase.handler()(testCase.responseWriter, testCase.request, testCase.params)
+			h.GetCurrentUser()(testCase.responseWriter, testCase.request, testCase.params)
 
 			if !strings.Contains(testCase.responseWriter.Body.String(), testCase.expectedBody) {
 				t.Fatalf("expected: %v, got: %v", testCase.expectedBody, testCase.responseWriter.Body.String())
@@ -145,11 +135,8 @@ func TestPostSignIn(t *testing.T) {
 		request        *http.Request
 		responseWriter *httptest.ResponseRecorder
 		params         httprouter.Params
-		handler        func() httprouter.Handle
 		expectedBody   string
 	}
-
-	h := &handlers{}
 
 	testCases := []testCase{
 		{
@@ -168,7 +155,6 @@ func TestPostSignIn(t *testing.T) {
 			),
 			responseWriter: httptest.NewRecorder(),
 			params:         httprouter.Params{},
-			handler:        h.PostSignIn,
 			expectedBody:   "test user",
 		},
 		{
@@ -187,7 +173,6 @@ func TestPostSignIn(t *testing.T) {
 			),
 			responseWriter: httptest.NewRecorder(),
 			params:         httprouter.Params{},
-			handler:        h.PostSignIn,
 			expectedBody:   "failed to read request body",
 		},
 		{
@@ -206,7 +191,6 @@ func TestPostSignIn(t *testing.T) {
 			),
 			responseWriter: httptest.NewRecorder(),
 			params:         httprouter.Params{},
-			handler:        h.PostSignIn,
 			expectedBody:   "failed to json unmarshal request body",
 		},
 		{
@@ -223,25 +207,17 @@ func TestPostSignIn(t *testing.T) {
 			),
 			responseWriter: httptest.NewRecorder(),
 			params:         httprouter.Params{},
-			handler:        h.PostSignIn,
 			expectedBody:   "failed to find current user",
 		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			h.service = testCase.srvMock
-			testCase.handler()(testCase.responseWriter, testCase.request, testCase.params)
+			h := NewHandlers(testCase.srvMock)
+			h.PostSignIn()(testCase.responseWriter, testCase.request, testCase.params)
 			if !strings.Contains(testCase.responseWriter.Body.String(), testCase.expectedBody) {
 				t.Fatalf("expected: %v, got: %v", testCase.expectedBody, testCase.responseWriter.Body.String())
 			}
 		})
-	}
-}
-
-func TestNewHandlers(t *testing.T) {
-	srvMock := &serviceMock{}
-	if handlers := NewHandlers(srvMock); handlers == nil {
-		t.Fatalf("unexpected nil value")
 	}
 }
