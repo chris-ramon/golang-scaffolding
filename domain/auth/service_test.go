@@ -5,6 +5,18 @@ import (
 	"testing"
 )
 
+type jwtMock struct {
+}
+
+func (j *jwtMock) Generate(ctx context.Context, data map[string]string) (*string, error) {
+	jwtToken := ""
+	return &jwtToken, nil
+}
+
+func (j *jwtMock) Validate(ctx context.Context, jwtToken string) (map[string]string, error) {
+	return map[string]string{}, nil
+}
+
 func TestCurrentUser(t *testing.T) {
 	type testCase struct {
 		name string
@@ -18,7 +30,7 @@ func TestCurrentUser(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			srv, err := NewService()
+			srv, err := NewService(&jwtMock{})
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
