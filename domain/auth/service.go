@@ -2,88 +2,46 @@ package auth
 
 import (
 	"context"
-	"crypto/rsa"
-	_ "embed"
-	"time"
-
-	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/chris-ramon/golang-scaffolding/domain/auth/types"
 )
 
-//go:embed app.rsa
-var appRsa []byte // openssl genrsa -out app.rsa 2048
-
-//go:embed app.rsa.pub
-var appRsaPub []byte // openssl rsa -in app.rsa -pubout > app.rsa.pub
-
 type service struct {
-	signKey   *rsa.PrivateKey
-	verifyKey *rsa.PublicKey
-}
-
-type customClaims struct {
-	Data map[string]string `json:"data"`
-	jwt.RegisteredClaims
+	jwt JWT
 }
 
 func (s *service) CurrentUser(jwtToken string) (*types.CurrentUser, error) {
-	parsedJWTToken, err := jwt.ParseWithClaims(jwtToken, &customClaims{}, func(t *jwt.Token) (interface{}, error) {
-		return s.verifyKey, nil
-	})
+	data, err := s.jwt.Validate(context.Background(), jwtToken)
 	if err != nil {
 		return nil, err
 	}
 
-	claims := parsedJWTToken.Claims.(*customClaims)
-
 	return &types.CurrentUser{
-		Username: claims.Data["username"],
+		Username: data["username"],
 	}, nil
 }
 
 func (s *service) AuthUser(ctx context.Context, username string, pwd string) (*types.CurrentUser, error) {
-	expiresAt := jwt.NewNumericDate(time.Now().Add(24 * time.Hour))
 	data := map[string]string{
 		"username": username,
 	}
 
-	t := jwt.New(jwt.GetSigningMethod("RS256"))
-	t.Claims = customClaims{
-		data,
-		jwt.RegisteredClaims{
-			ExpiresAt: expiresAt,
-		},
-	}
-
-	jwtToken, err := t.SignedString(s.signKey)
+	jwtToken, err := s.jwt.Generate(context.Background(), data)
 	if err != nil {
 		return nil, err
 	}
 
 	return &types.CurrentUser{
 		Username: username,
-		JWT:      jwtToken,
+		JWT:      *jwtToken,
 	}, nil
 }
 
-func NewService() (*service, error) {
-	signBytes := appRsa
+func NewService(jwt JWT) (*service, error) {
+	return &service{jwt: jwt}, nil
+}
 
-	sKey, err := jwt.ParseRSAPrivateKeyFromPEM(signBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	verifyBytes := appRsaPub
-
-	vKey, err := jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	return &service{
-		signKey:   sKey,
-		verifyKey: vKey,
-	}, nil
+type JWT interface {
+	Generate(ctx context.Context, data map[string]string) (*string, error)
+	Validate(ctx context.Context, jwtToken string) (map[string]string, error)
 }
