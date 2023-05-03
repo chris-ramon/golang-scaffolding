@@ -16,7 +16,7 @@ type repo struct {
 func (r *repo) FindUsers(ctx context.Context) ([]*userTypes.User, error) {
 	args := models.ListUsersParams{
 		Limit:  10,
-		Offset: 10,
+		Offset: 0,
 	}
 
 	users, err := r.db.Queries().ListUsers(ctx, args)
