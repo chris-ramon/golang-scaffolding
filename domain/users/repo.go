@@ -29,7 +29,8 @@ func (r *repo) FindUsers(ctx context.Context) ([]*userTypes.User, error) {
 
 	for _, user := range users {
 		result = append(result, &userTypes.User{
-			ID: fmt.Sprintf("%d", user.ID),
+			ID:       fmt.Sprintf("%d", user.ID),
+			Username: user.Username,
 		})
 	}
 
