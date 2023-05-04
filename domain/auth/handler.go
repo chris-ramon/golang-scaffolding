@@ -31,14 +31,14 @@ func (h *handlers) GetPing() httprouter.Handle {
 func (h *handlers) GetCurrentUser() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		r = r.WithContext(ctxutil.WithAuthHeader(r.Context(), r.Header))
-		authorization, err := ctxutil.AuthHeaderValueFromCtx(r.Context())
+		jwtToken, err := ctxutil.AuthHeaderValueFromCtx(r.Context())
 		if err != nil {
 			log.Printf("failed to get authorization header: %v", err)
 			http.Error(w, "failed to get authorization header", http.StatusInternalServerError)
 			return
 		}
 
-		u, err := h.service.CurrentUser(r.Context(), authorization)
+		u, err := h.service.CurrentUser(r.Context(), jwtToken)
 		if err != nil {
 			log.Printf("failed to find current user: %v", err)
 			http.Error(w, "failed to find current user", http.StatusInternalServerError)

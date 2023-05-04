@@ -26,12 +26,12 @@ var CurrentUserField = &graphql.Field{
 			return nil, err
 		}
 
-		authorization, err := ctxutil.AuthHeaderValueFromCtx(p.Context)
+		jwtToken, err := ctxutil.AuthHeaderValueFromCtx(p.Context)
 		if err != nil {
 			return nil, err
 		}
 
-		currentUser, err := srvs.AuthService.CurrentUser(p.Context, authorization)
+		currentUser, err := srvs.AuthService.CurrentUser(p.Context, jwtToken)
 		if err != nil {
 			return nil, err
 		}
