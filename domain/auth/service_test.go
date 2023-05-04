@@ -82,7 +82,7 @@ func TestCurrentUser(t *testing.T) {
 			}
 
 			if authedUser != nil {
-				currentUser, err := srv.CurrentUser(authedUser.JWT)
+				currentUser, err := srv.CurrentUser(context.Background(), authedUser.JWT)
 				if testCase.currentUserExpectedError != nil {
 					if err != testCase.currentUserExpectedError {
 						t.Fatalf("unexpected error: %v", err)

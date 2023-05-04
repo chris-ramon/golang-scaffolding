@@ -21,12 +21,12 @@ func (testReaderError) Read(p []byte) (int, error) {
 }
 
 type serviceMock struct {
-	currentUser func(jwtToken string) (*types.CurrentUser, error)
+	currentUser func(ctx context.Context, jwtToken string) (*types.CurrentUser, error)
 	authUser    func(ctx context.Context, username string, pwd string) (*types.CurrentUser, error)
 }
 
-func (s *serviceMock) CurrentUser(jwtToken string) (*types.CurrentUser, error) {
-	return s.currentUser(jwtToken)
+func (s *serviceMock) CurrentUser(ctx context.Context, jwtToken string) (*types.CurrentUser, error) {
+	return s.currentUser(ctx, jwtToken)
 }
 
 func (s *serviceMock) AuthUser(ctx context.Context, username string, pwd string) (*types.CurrentUser, error) {
@@ -66,7 +66,7 @@ func TestGetCurrentUser(t *testing.T) {
 		{
 			name: "success",
 			srvMock: &serviceMock{
-				currentUser: func(jwtToken string) (*types.CurrentUser, error) {
+				currentUser: func(ctx context.Context, jwtToken string) (*types.CurrentUser, error) {
 					return &types.CurrentUser{
 						Username: "test user",
 					}, nil
@@ -94,7 +94,7 @@ func TestGetCurrentUser(t *testing.T) {
 		{
 			name: "current user error",
 			srvMock: &serviceMock{
-				currentUser: func(jwtToken string) (*types.CurrentUser, error) {
+				currentUser: func(ctx context.Context, jwtToken string) (*types.CurrentUser, error) {
 					return nil, errors.New("test error")
 				},
 			},
