@@ -14,7 +14,7 @@ import (
 )
 
 type Service interface {
-	CurrentUser(jwtToken string) (*types.CurrentUser, error)
+	CurrentUser(ctx context.Context, jwtToken string) (*types.CurrentUser, error)
 	AuthUser(ctx context.Context, username string, pwd string) (*types.CurrentUser, error)
 }
 
@@ -38,7 +38,7 @@ func (h *handlers) GetCurrentUser() httprouter.Handle {
 			return
 		}
 
-		u, err := h.service.CurrentUser(authorization)
+		u, err := h.service.CurrentUser(r.Context(), authorization)
 		if err != nil {
 			log.Printf("failed to find current user: %v", err)
 			http.Error(w, "failed to find current user", http.StatusInternalServerError)

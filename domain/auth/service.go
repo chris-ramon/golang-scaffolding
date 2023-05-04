@@ -10,8 +10,8 @@ type service struct {
 	jwt JWT
 }
 
-func (s *service) CurrentUser(jwtToken string) (*types.CurrentUser, error) {
-	data, err := s.jwt.Validate(context.Background(), jwtToken)
+func (s *service) CurrentUser(ctx context.Context, jwtToken string) (*types.CurrentUser, error) {
+	data, err := s.jwt.Validate(ctx, jwtToken)
 	if err != nil {
 		return nil, err
 	}

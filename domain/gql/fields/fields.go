@@ -31,7 +31,7 @@ var CurrentUserField = &graphql.Field{
 			return nil, err
 		}
 
-		currentUser, err := srvs.AuthService.CurrentUser(authorization)
+		currentUser, err := srvs.AuthService.CurrentUser(p.Context, authorization)
 		if err != nil {
 			return nil, err
 		}
