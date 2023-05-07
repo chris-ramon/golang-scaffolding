@@ -26,7 +26,7 @@ func (s *service) AuthUser(ctx context.Context, username string, pwd string) (*t
 		"username": username,
 	}
 
-	jwtToken, err := s.jwt.Generate(context.Background(), data)
+	jwtToken, err := s.jwt.Generate(ctx, data)
 	if err != nil {
 		return nil, err
 	}

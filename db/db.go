@@ -23,8 +23,8 @@ type db struct {
 	queries *models.Queries
 }
 
-func (d *db) Ping() error {
-	if err := d.sqlDB.PingContext(context.Background()); err != nil {
+func (d *db) Ping(ctx context.Context) error {
+	if err := d.sqlDB.PingContext(ctx); err != nil {
 		return err
 	}
 
@@ -76,7 +76,7 @@ func New(dbConfig *config.DBConfig) (*db, error) {
 }
 
 type DB interface {
-	Ping() error
+	Ping(ctx context.Context) error
 	Close() error
 	Migrate() error
 	Queries() *models.Queries
