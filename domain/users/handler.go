@@ -7,6 +7,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
+	"github.com/admin-golang/admin/dataloader"
 	"github.com/chris-ramon/golang-scaffolding/domain/users/mappers"
 	userTypes "github.com/chris-ramon/golang-scaffolding/domain/users/types"
 )
@@ -26,7 +27,24 @@ func (h *handlers) GetUsers() httprouter.Handle {
 
 		usersAPI := mappers.UsersFromTypeToAPI(users)
 
-		resp, err := json.Marshal(usersAPI)
+		response := dataloader.Response{
+			Data: usersAPI,
+			Meta: dataloader.Meta{
+				Headers: []string{"ID", "Username"},
+				Components: map[string]string{
+					"id":       "text",
+					"username": "text",
+				},
+				Pagination: dataloader.Pagination{
+					TotalCount:  len(usersAPI),
+					PerPage:     10,
+					CurrentPage: 0,
+					RowsPerPage: []int{10, 25, 50},
+				},
+			},
+		}
+
+		resp, err := json.Marshal(response)
 		if err != nil {
 			http.Error(w, "failed to marshal response", http.StatusInternalServerError)
 			return
