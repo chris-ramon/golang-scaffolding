@@ -16,6 +16,13 @@ ag -l 'chris-ramon/golang-scaffolding'|xargs sed -i 's/chris-ramon\/golang-scaff
 docker compose up
 ```
 
+##### GraphQL Playground
+
+[http://localhost:8080/graphql](http://localhost:8080/graphql)
+
+
+##### Features
+
 Contains the following example domains:
 - [x] Env Variables.
 - [x] Config.
