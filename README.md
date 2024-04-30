@@ -4,8 +4,16 @@ A golang scaffolding for getting started new projects.
 
 #### Getting Started
 
+##### Replace Paths
+
 ```
-docker-compose up
+ag -l 'chris-ramon/golang-scaffolding'|xargs sed -i 's/chris-ramon\/golang-scaffolding/your-org\/your-pkg/g'
+```
+
+##### Running
+
+```
+docker compose up
 ```
 
 Contains the following example domains:
