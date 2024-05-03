@@ -19,7 +19,7 @@ var PingField = &graphql.Field{
 
 var CurrentUserField = &graphql.Field{
 	Name: "CurrentUser",
-	Type: types.UserType,
+	Type: types.CurrentUserType,
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 		srvs, err := servicesFromResolveParams(p)
 		if err != nil {
@@ -43,7 +43,7 @@ var CurrentUserField = &graphql.Field{
 }
 
 var AuthUserField = &graphql.Field{
-	Type:        types.UserType,
+	Type:        types.CurrentUserType,
 	Description: "Authenticates and authorizes an user.",
 	Args: graphql.FieldConfigArgument{
 		"username": &graphql.ArgumentConfig{
