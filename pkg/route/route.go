@@ -1,11 +1,11 @@
 package route
 
 import (
-	"github.com/julienschmidt/httprouter"
+	"net/http"
 )
 
 type Route struct {
 	HTTPMethod string
 	Path       string
-	Handler    httprouter.Handle
+	Handler    http.HandlerFunc
 }

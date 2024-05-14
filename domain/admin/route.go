@@ -3,8 +3,6 @@ package admin
 import (
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
-
 	"github.com/chris-ramon/golang-scaffolding/pkg/ctxutil"
 	"github.com/chris-ramon/golang-scaffolding/pkg/route"
 )
@@ -22,7 +20,7 @@ func (ro *routes) All() []route.Route {
 		route.Route{
 			HTTPMethod: "GET",
 			Path:       "/admin",
-			Handler: func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+			Handler: func(w http.ResponseWriter, r *http.Request) {
 				r = r.WithContext(ctxutil.WithAuthHeader(r.Context(), r.Header))
 				ro.handlers.GetAdmin().ServeHTTP(w, r)
 			},

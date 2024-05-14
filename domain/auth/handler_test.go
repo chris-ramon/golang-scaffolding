@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/chris-ramon/golang-scaffolding/domain/auth/types"
-	"github.com/julienschmidt/httprouter"
 )
 
 type testReaderError int
@@ -37,9 +36,8 @@ func TestGetPing(t *testing.T) {
 	h := NewHandlers(&serviceMock{})
 	req := httptest.NewRequest("GET", "/ping", nil)
 	w := httptest.NewRecorder()
-	params := httprouter.Params{}
 
-	h.GetPing()(w, req, params)
+	h.GetPing()(w, req)
 
 	body, err := io.ReadAll(w.Result().Body)
 	if err != nil {
@@ -56,7 +54,6 @@ func TestGetCurrentUser(t *testing.T) {
 		srvMock            *serviceMock
 		request            *http.Request
 		responseWriter     *httptest.ResponseRecorder
-		params             httprouter.Params
 		header             http.Header
 		expectedBody       string
 		expectedStatusCode uint
@@ -74,7 +71,6 @@ func TestGetCurrentUser(t *testing.T) {
 			},
 			request:        httptest.NewRequest("GET", "/auth/current-user", nil),
 			responseWriter: httptest.NewRecorder(),
-			params:         httprouter.Params{},
 			header: map[string][]string{
 				"Authorization": []string{"Bearer Test-JWT-Token"},
 			},
@@ -86,7 +82,6 @@ func TestGetCurrentUser(t *testing.T) {
 			srvMock:            &serviceMock{},
 			request:            httptest.NewRequest("GET", "/auth/current-user", nil),
 			responseWriter:     httptest.NewRecorder(),
-			params:             httprouter.Params{},
 			header:             map[string][]string{},
 			expectedBody:       "failed to get authorization header",
 			expectedStatusCode: http.StatusInternalServerError,
@@ -100,7 +95,6 @@ func TestGetCurrentUser(t *testing.T) {
 			},
 			request:        httptest.NewRequest("GET", "/auth/current-user", nil),
 			responseWriter: httptest.NewRecorder(),
-			params:         httprouter.Params{},
 			header: map[string][]string{
 				"Authorization": []string{"Bearer Test-JWT-Token"},
 			},
@@ -119,7 +113,7 @@ func TestGetCurrentUser(t *testing.T) {
 				}
 			}
 
-			h.GetCurrentUser()(testCase.responseWriter, testCase.request, testCase.params)
+			h.GetCurrentUser()(testCase.responseWriter, testCase.request)
 
 			if !strings.Contains(testCase.responseWriter.Body.String(), testCase.expectedBody) {
 				t.Fatalf("expected: %v, got: %v", testCase.expectedBody, testCase.responseWriter.Body.String())
@@ -134,7 +128,6 @@ func TestPostSignIn(t *testing.T) {
 		srvMock        *serviceMock
 		request        *http.Request
 		responseWriter *httptest.ResponseRecorder
-		params         httprouter.Params
 		expectedBody   string
 	}
 
@@ -154,7 +147,6 @@ func TestPostSignIn(t *testing.T) {
 				bytes.NewBuffer([]byte(`{"email":"test@test.com","password":"test-pwd"}`)),
 			),
 			responseWriter: httptest.NewRecorder(),
-			params:         httprouter.Params{},
 			expectedBody:   "test user",
 		},
 		{
@@ -172,7 +164,6 @@ func TestPostSignIn(t *testing.T) {
 				testReaderError(0),
 			),
 			responseWriter: httptest.NewRecorder(),
-			params:         httprouter.Params{},
 			expectedBody:   "failed to read request body",
 		},
 		{
@@ -190,7 +181,6 @@ func TestPostSignIn(t *testing.T) {
 				bytes.NewBuffer([]byte(`{invalid}`)),
 			),
 			responseWriter: httptest.NewRecorder(),
-			params:         httprouter.Params{},
 			expectedBody:   "failed to json unmarshal request body",
 		},
 		{
@@ -206,7 +196,6 @@ func TestPostSignIn(t *testing.T) {
 				bytes.NewBuffer([]byte(`{"email":"test@test.com","password":"test-pwd"}`)),
 			),
 			responseWriter: httptest.NewRecorder(),
-			params:         httprouter.Params{},
 			expectedBody:   "failed to find current user",
 		},
 	}
@@ -214,7 +203,7 @@ func TestPostSignIn(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			h := NewHandlers(testCase.srvMock)
-			h.PostSignIn()(testCase.responseWriter, testCase.request, testCase.params)
+			h.PostSignIn()(testCase.responseWriter, testCase.request)
 			if !strings.Contains(testCase.responseWriter.Body.String(), testCase.expectedBody) {
 				t.Fatalf("expected: %v, got: %v", testCase.expectedBody, testCase.responseWriter.Body.String())
 			}

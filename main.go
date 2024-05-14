@@ -5,8 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
-
 	"github.com/chris-ramon/golang-scaffolding/config"
 	"github.com/chris-ramon/golang-scaffolding/db"
 	"github.com/chris-ramon/golang-scaffolding/domain/admin"
@@ -36,7 +34,7 @@ func main() {
 		log.Println("successfully run migrations")
 	}
 
-	router := httprouter.New()
+	router := http.NewServeMux()
 
 	usersRepo := users.NewRepo(db)
 	usersService := users.NewService(usersRepo)
@@ -78,7 +76,7 @@ func main() {
 	routes = append(routes, usersRoutes.All()...)
 
 	for _, r := range routes {
-		router.Handle(r.HTTPMethod, r.Path, r.Handler)
+		router.HandleFunc(fmt.Sprintf("%s %s", r.HTTPMethod, r.Path), r.Handler)
 	}
 
 	log.Printf("server running on port :%s", conf.Port)

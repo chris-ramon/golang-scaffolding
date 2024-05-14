@@ -1,15 +1,15 @@
 package auth
 
 import (
-	"github.com/julienschmidt/httprouter"
+	"net/http"
 
 	"github.com/chris-ramon/golang-scaffolding/pkg/route"
 )
 
 type Handlers interface {
-	GetPing() httprouter.Handle
-	GetCurrentUser() httprouter.Handle
-	PostSignIn() httprouter.Handle
+	GetPing() http.HandlerFunc
+	GetCurrentUser() http.HandlerFunc
+	PostSignIn() http.HandlerFunc
 }
 
 type routes struct {

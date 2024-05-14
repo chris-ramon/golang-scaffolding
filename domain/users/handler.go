@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
-
 	"github.com/admin-golang/admin/dataloader"
 	"github.com/chris-ramon/golang-scaffolding/domain/users/mappers"
 	userTypes "github.com/chris-ramon/golang-scaffolding/domain/users/types"
@@ -16,8 +14,8 @@ type handlers struct {
 	srv Service
 }
 
-func (h *handlers) GetUsers() httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (h *handlers) GetUsers() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		users, err := h.srv.FindUsers(r.Context())
 
 		if err != nil {
