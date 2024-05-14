@@ -4,28 +4,26 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/julienschmidt/httprouter"
-
 	"github.com/chris-ramon/golang-scaffolding/pkg/route"
 )
 
 type handlersMock struct {
-	getPing        httprouter.Handle
-	getCurrentUser httprouter.Handle
-	postSignIn     httprouter.Handle
+	getPing        http.HandlerFunc
+	getCurrentUser http.HandlerFunc
+	postSignIn     http.HandlerFunc
 }
 
-func (h *handlersMock) GetPing() httprouter.Handle        { return h.getPing }
-func (h *handlersMock) GetCurrentUser() httprouter.Handle { return h.getCurrentUser }
-func (h *handlersMock) PostSignIn() httprouter.Handle     { return h.postSignIn }
+func (h *handlersMock) GetPing() http.HandlerFunc        { return h.getPing }
+func (h *handlersMock) GetCurrentUser() http.HandlerFunc { return h.getCurrentUser }
+func (h *handlersMock) PostSignIn() http.HandlerFunc     { return h.postSignIn }
 
 func TestRoutesAll(t *testing.T) {
 	h := &handlersMock{
-		getPing: func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		getPing: func(w http.ResponseWriter, r *http.Request) {
 		},
-		getCurrentUser: func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		getCurrentUser: func(w http.ResponseWriter, r *http.Request) {
 		},
-		postSignIn: func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		postSignIn: func(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
