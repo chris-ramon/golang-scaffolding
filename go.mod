@@ -1,6 +1,6 @@
 module github.com/chris-ramon/golang-scaffolding
 
-go 1.20
+go 1.22.3
 
 require (
 	github.com/graphql-go/graphql v0.8.1

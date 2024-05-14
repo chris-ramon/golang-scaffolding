@@ -3,7 +3,7 @@ version: "3.9"
 services:
   app:
     working_dir: /app
-    image: golang:1.20
+    image: golang:1.22.3
     command: sh -c "PORT=8080 DB_USER=admin DB_PWD=admin DB_HOST=db DB_NAME=local DB_SSL_MODE=disable ./bin/_dev.sh"
     volumes:
       - ./:/app
