@@ -7,8 +7,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
-
 	"github.com/chris-ramon/golang-scaffolding/domain/auth/types"
 	"github.com/chris-ramon/golang-scaffolding/pkg/ctxutil"
 )
@@ -22,14 +20,14 @@ type handlers struct {
 	service Service
 }
 
-func (h *handlers) GetPing() httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (h *handlers) GetPing() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("ok"))
 	}
 }
 
-func (h *handlers) GetCurrentUser() httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (h *handlers) GetCurrentUser() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		r = r.WithContext(ctxutil.WithAuthHeader(r.Context(), r.Header))
 		jwtToken, err := ctxutil.AuthHeaderValueFromCtx(r.Context())
 		if err != nil {
@@ -49,8 +47,8 @@ func (h *handlers) GetCurrentUser() httprouter.Handle {
 	}
 }
 
-func (h *handlers) PostSignIn() httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (h *handlers) PostSignIn() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		b, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			log.Printf("failed to read request body: %v", err)

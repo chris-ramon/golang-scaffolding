@@ -1,13 +1,13 @@
 package users
 
 import (
-	"github.com/julienschmidt/httprouter"
+	"net/http"
 
 	"github.com/chris-ramon/golang-scaffolding/pkg/route"
 )
 
 type Handlers interface {
-	GetUsers() httprouter.Handle
+	GetUsers() http.HandlerFunc
 }
 
 type routes struct {

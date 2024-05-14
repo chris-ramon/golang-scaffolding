@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/graphql-go/handler"
-	"github.com/julienschmidt/httprouter"
 
 	"github.com/chris-ramon/golang-scaffolding/pkg/ctxutil"
 	"github.com/chris-ramon/golang-scaffolding/pkg/route"
@@ -24,7 +23,7 @@ func (ro *routes) All() []route.Route {
 		route.Route{
 			HTTPMethod: "GET",
 			Path:       "/graphql",
-			Handler: func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+			Handler: func(w http.ResponseWriter, r *http.Request) {
 				r = r.WithContext(ctxutil.WithAuthHeader(r.Context(), r.Header))
 				ro.handlers.GetGraphQL().ServeHTTP(w, r)
 			},
@@ -32,7 +31,7 @@ func (ro *routes) All() []route.Route {
 		route.Route{
 			HTTPMethod: "POST",
 			Path:       "/graphql",
-			Handler: func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+			Handler: func(w http.ResponseWriter, r *http.Request) {
 				r = r.WithContext(ctxutil.WithAuthHeader(r.Context(), r.Header))
 				ro.handlers.PostGraphQL().ServeHTTP(w, r)
 			},
