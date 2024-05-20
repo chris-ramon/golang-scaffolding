@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go }}
-      - run: go test ./... -coverprofile=cov.out -covermode=atomic
+      - run: GOEXPERIMENT=nocoverageredesign go test ./... -coverprofile=cov.out -covermode=atomic
       - name: Codecov
         uses: codecov/codecov-action@v2
         with:
