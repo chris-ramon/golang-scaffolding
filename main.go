@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"slices"
 
 	"github.com/chris-ramon/golang-scaffolding/config"
 	"github.com/chris-ramon/golang-scaffolding/db"
@@ -12,7 +13,6 @@ import (
 	"github.com/chris-ramon/golang-scaffolding/domain/gql"
 	"github.com/chris-ramon/golang-scaffolding/domain/users"
 	"github.com/chris-ramon/golang-scaffolding/pkg/jwt"
-	"github.com/chris-ramon/golang-scaffolding/pkg/route"
 )
 
 func main() {
@@ -69,11 +69,12 @@ func main() {
 	}
 	adminRoutes := admin.NewRoutes(adminHandlers)
 
-	routes := []route.Route{}
-	routes = append(routes, authRoutes.All()...)
-	routes = append(routes, gqlRoutes.All()...)
-	routes = append(routes, adminRoutes.All()...)
-	routes = append(routes, usersRoutes.All()...)
+	routes := slices.Concat(
+		authRoutes.All(),
+		gqlRoutes.All(),
+		adminRoutes.All(),
+		usersRoutes.All(),
+	)
 
 	for _, r := range routes {
 		router.HandleFunc(fmt.Sprintf("%s %s", r.HTTPMethod, r.Path), r.Handler)
