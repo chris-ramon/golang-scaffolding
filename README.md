@@ -7,7 +7,7 @@ A golang scaffolding for getting started new projects.
 ##### Replace Paths
 
 ```
-ag -l 'chris-ramon/golang-scaffolding'|xargs sed -i 's/chris-ramon\/golang-scaffolding/your-org\/your-pkg/g'
+ag -l 'chris-ramon/golang-scaffolding'|xargs sed -i 's/<your-org>/<your-repo>/g'
 ```
 
 ##### Running
