@@ -13,7 +13,7 @@ ag -l 'chris-ramon/golang-scaffolding'|xargs sed -i 's/<your-org>/<your-repo>/g'
 ##### Running
 
 ```
-docker compose up
+./bin/dev.sh
 ```
 
 ##### GraphQL Playground
