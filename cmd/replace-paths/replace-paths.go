@@ -90,7 +90,7 @@ func (rp *ReplacePaths) readFileImports(filePath string) ([]string, error) {
 	}
 	defer goFile.Close()
 
-	funcNames := []string{}
+	declNames := []string{}
 	fset := token.NewFileSet()
 	astFile, err := parser.ParseFile(fset, "", goFile, parser.ParseComments)
 	if err != nil {
@@ -99,12 +99,25 @@ func (rp *ReplacePaths) readFileImports(filePath string) ([]string, error) {
 
 	for _, decl := range astFile.Decls {
 		switch t := decl.(type) {
-		case *ast.FuncDecl:
-			funcNames = append(funcNames, t.Name.Name)
+		case *ast.GenDecl:
+			if t.Tok.String() == "import" {
+				for _, spec := range t.Specs {
+					switch s := spec.(type) {
+					case *ast.ImportSpec:
+						if s.Path != nil {
+							v := s.Path.Value
+							log.Println(v)
+							// TODO(@chris-ramon).
+							// GitHub Issue: To be completed.
+						}
+					}
+				}
+			}
+
 		}
 	}
 
-	return funcNames, nil
+	return declNames, nil
 }
 
 func (rp *ReplacePaths) readFile(filePath string) (*os.File, error) {
