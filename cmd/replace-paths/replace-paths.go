@@ -108,7 +108,7 @@ func (rp *ReplacePaths) readFileImports(filePath string) ([]string, error) {
 							v := s.Path.Value
 							log.Println(v)
 							// TODO(@chris-ramon).
-							// GitHub Issue: To be completed.
+							// GitHub Issue: https://github.com/chris-ramon/golang-scaffolding/issues/6.
 						}
 					}
 				}
