@@ -1,0 +1,7 @@
+mutation {
+  authUser(username: "", password: "") {
+    id
+    jwt
+    username
+  }
+}
