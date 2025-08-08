@@ -1,5 +1,6 @@
-domain/auth/app.rsa
-domain/auth/app.rsa.pub
+app.rsa
+app.rsa.pub
 coverage.html
 coverage.out
 *.swp
+.env
