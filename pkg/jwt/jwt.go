@@ -7,13 +7,9 @@ import (
 	"time"
 
 	jwtV5 "github.com/golang-jwt/jwt/v5"
+
+	"github.com/chris-ramon/golang-scaffolding/config"
 )
-
-//go:embed app.rsa
-var appRsa []byte // openssl genrsa -out app.rsa 2048
-
-//go:embed app.rsa.pub
-var appRsaPub []byte // openssl rsa -in app.rsa -pubout > app.rsa.pub
 
 type customClaims struct {
 	Data map[string]string `json:"data"`
@@ -58,15 +54,15 @@ func (j *jwt) Validate(ctx context.Context, jwtToken string) (map[string]string,
 	return claims.Data, nil
 }
 
-func NewJWT() (*jwt, error) {
-	signBytes := appRsa
+func NewJWT(config *config.JWTConfig) (*jwt, error) {
+	signBytes := config.AppRsa
 
 	sKey, err := jwtV5.ParseRSAPrivateKeyFromPEM(signBytes)
 	if err != nil {
 		return nil, err
 	}
 
-	verifyBytes := appRsaPub
+	verifyBytes := config.AppRsaPub
 
 	vKey, err := jwtV5.ParseRSAPublicKeyFromPEM(verifyBytes)
 	if err != nil {
