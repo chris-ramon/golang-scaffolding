@@ -7,10 +7,12 @@ import (
 	"strings"
 )
 
-const AuthHeaderName = "Authorization"
+type AuthHeaderNameType string
+
+const AuthHeaderName AuthHeaderNameType = "Authorization"
 
 func WithAuthHeader(ctx context.Context, header http.Header) context.Context {
-	return context.WithValue(ctx, AuthHeaderName, header.Get(AuthHeaderName))
+	return context.WithValue(ctx, AuthHeaderName, header.Get(string(AuthHeaderName)))
 }
 
 func AuthHeaderValueFromCtx(ctx context.Context) (string, error) {
