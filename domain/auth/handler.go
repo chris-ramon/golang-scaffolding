@@ -3,7 +3,7 @@ package auth
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 
@@ -22,7 +22,11 @@ type handlers struct {
 
 func (h *handlers) GetPing() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("ok"))
+		if _, err := w.Write([]byte("ok")); err != nil {
+			log.Printf("failed to write to reponse writer: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
@@ -43,13 +47,17 @@ func (h *handlers) GetCurrentUser() http.HandlerFunc {
 			return
 		}
 
-		w.Write([]byte(u.Username))
+		if _, err := w.Write([]byte(u.Username)); err != nil {
+			log.Printf("failed to write to reponse writer: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
 func (h *handlers) PostSignIn() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		b, err := ioutil.ReadAll(r.Body)
+		b, err := io.ReadAll(r.Body)
 		if err != nil {
 			log.Printf("failed to read request body: %v", err)
 			http.Error(w, "failed to read request body", http.StatusInternalServerError)
@@ -74,7 +82,11 @@ func (h *handlers) PostSignIn() http.HandlerFunc {
 			return
 		}
 
-		w.Write([]byte(u.Username))
+		if _, err := w.Write([]byte(u.Username)); err != nil {
+			log.Printf("failed to write to reponse writer: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 
 	}
 }
