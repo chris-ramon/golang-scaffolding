@@ -1,4 +1,4 @@
-package fields
+package util
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"github.com/chris-ramon/golang-scaffolding/domain/internal/services"
 )
 
-func servicesFromResolveParams(p graphql.ResolveParams) (*services.Services, error) {
+func ServicesFromResolveParams(p graphql.ResolveParams) (*services.Services, error) {
 	rootValue := p.Info.RootValue.(map[string]interface{})
 	srvs, ok := rootValue["services"].(*services.Services)
 
@@ -19,7 +19,7 @@ func servicesFromResolveParams(p graphql.ResolveParams) (*services.Services, err
 	return srvs, nil
 }
 
-func fieldFromArgs[T any](args map[string]interface{}, fieldName string) (T, error) {
+func FieldFromArgs[T any](args map[string]interface{}, fieldName string) (T, error) {
 	field, ok := args[fieldName].(T)
 
 	if !ok {

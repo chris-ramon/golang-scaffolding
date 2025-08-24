@@ -5,6 +5,7 @@ import (
 
 	"github.com/chris-ramon/golang-scaffolding/domain/auth/mappers"
 	"github.com/chris-ramon/golang-scaffolding/domain/gql/types"
+	"github.com/chris-ramon/golang-scaffolding/domain/gql/util"
 	usersMappers "github.com/chris-ramon/golang-scaffolding/domain/users/mappers"
 	"github.com/chris-ramon/golang-scaffolding/pkg/ctxutil"
 )
@@ -21,7 +22,7 @@ var CurrentUserField = &graphql.Field{
 	Name: "CurrentUser",
 	Type: types.CurrentUserType,
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-		srvs, err := servicesFromResolveParams(p)
+		srvs, err := util.ServicesFromResolveParams(p)
 		if err != nil {
 			return nil, err
 		}
@@ -54,17 +55,17 @@ var AuthUserField = &graphql.Field{
 		},
 	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-		srvs, err := servicesFromResolveParams(p)
+		srvs, err := util.ServicesFromResolveParams(p)
 		if err != nil {
 			return nil, err
 		}
 
-		username, err := fieldFromArgs[string](p.Args, "username")
+		username, err := util.FieldFromArgs[string](p.Args, "username")
 		if err != nil {
 			return nil, err
 		}
 
-		password, err := fieldFromArgs[string](p.Args, "password")
+		password, err := util.FieldFromArgs[string](p.Args, "password")
 		if err != nil {
 			return nil, err
 		}
@@ -82,7 +83,7 @@ var UsersField = &graphql.Field{
 	Name: "Users",
 	Type: graphql.NewList(types.UserType),
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-		srvs, err := servicesFromResolveParams(p)
+		srvs, err := util.ServicesFromResolveParams(p)
 		if err != nil {
 			return nil, err
 		}
