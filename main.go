@@ -12,6 +12,7 @@ import (
 	"github.com/chris-ramon/golang-scaffolding/domain/auth"
 	"github.com/chris-ramon/golang-scaffolding/domain/gql"
 	"github.com/chris-ramon/golang-scaffolding/domain/users"
+	cachePkg "github.com/chris-ramon/golang-scaffolding/pkg/cache"
 	"github.com/chris-ramon/golang-scaffolding/pkg/jwt"
 )
 
@@ -40,8 +41,10 @@ func main() {
 
 	router := http.NewServeMux()
 
+	cache := cachePkg.New[string, string]()
+
 	usersRepo := users.NewRepo(db)
-	usersService := users.NewService(usersRepo)
+	usersService := users.NewService(usersRepo, cache)
 	usersHandlers, err := users.NewHandlers(usersService)
 	if err != nil {
 		handleErr(err)
