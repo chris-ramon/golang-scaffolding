@@ -1,6 +1,6 @@
 module github.com/chris-ramon/golang-scaffolding
 
-go 1.22.3
+go 1.23.0
 
 require (
 	github.com/graphql-go/graphql v0.8.1
@@ -11,6 +11,7 @@ require (
 	github.com/admin-golang/admin v0.0.0-20220720064250-fa4d88cf3085
 	github.com/golang-jwt/jwt/v5 v5.0.0-rc.2
 	github.com/golang-migrate/migrate/v4 v4.15.2
+	github.com/jellydator/ttlcache/v3 v3.4.0
 	github.com/lib/pq v1.10.8
 )
 
@@ -19,5 +20,6 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
+	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.0.0-20220317061510-51cd9980dadf // indirect
 )
