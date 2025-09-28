@@ -10,6 +10,18 @@ A golang scaffolding for getting started new projects.
 ag -l 'chris-ramon/golang-scaffolding'| xargs sed -i 's|chris-ramon/golang-scaffolding|<your-org>/<your-repo>|g'
 ```
 
+##### Create `.env` file
+
+`APP_RSA`
+```
+cat app.rsa | base64 | tr -d '\n'|pbcopy
+```
+
+`APP_RSA_PUB`
+```
+cat app.rsa.pub | base64 | tr -d '\n'|pbcopy
+```
+
 ##### Running
 
 ```
