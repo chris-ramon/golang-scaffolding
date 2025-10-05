@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # Lists go dependencies along their latest version available.
 go list -m -u all
 
