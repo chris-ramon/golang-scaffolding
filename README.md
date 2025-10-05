@@ -38,13 +38,13 @@ cat app.rsa.pub | base64 | tr -d '\n'|pbcopy
 docker exec -it golang-scaffolding-app-1 bash
 ```
 
-Up
+Up one migration:
 
 ```bash
 migrate -database "postgres://admin:admin@db:5432/local?sslmode=disable" -path "./db/migrations" up 1
 ```
 
-Down
+Down one migration:
 
 ```bash
 migrate -database "postgres://admin:admin@db:5432/local?sslmode=disable" -path "./db/migrations" down 1
