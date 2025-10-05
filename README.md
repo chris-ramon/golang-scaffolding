@@ -32,6 +32,24 @@ cat app.rsa.pub | base64 | tr -d '\n'|pbcopy
 
 [http://localhost:8080/graphql](http://localhost:8080/graphql)
 
+##### DB Migrations
+
+```bash
+docker exec -it golang-scaffolding-app-1 bash
+```
+
+Up
+
+```bash
+migrate -database "postgres://admin:admin@db:5432/local?sslmode=disable" -path "./db/migrations" up 1
+```
+
+Down
+
+```bash
+migrate -database "postgres://admin:admin@db:5432/local?sslmode=disable" -path "./db/migrations" down 1
+```
+
 
 ##### Features
 
